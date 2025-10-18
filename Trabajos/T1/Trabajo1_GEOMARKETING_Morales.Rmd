@@ -1,0 +1,302 @@
+---
+title: "Migración y escolaridad incompleta en adultos para la Región Metropolitana"
+author: "Alfonso Morales Donoso"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+# 1. Introducción
+
+Históricamente siempre ha existido población migrante la cual, por diversas circunstancias, ha tenido que migrar y buscar residencia fuera de su país de origen, lo que genera un cambio tanto para la persona al tener que adaptarse a las culturas de un nuevo país, como para el país al tener que adaptarse al ingreso de diferentes culturas.
+
+En este siglo, Chile ha presentado en los últimos 20 años un crecimiento de esta población migrante que ha ido cada vez en aumento, ya sea por diversas crisis económicas y sociales presentes en sus países de origen. Esto ha generado una sobrepoblación en ciertos sectores del país, con problemáticas de saturación de sistemas de salud, educación, seguridad y un déficit habitacional aún más grande del que ya existía.
+
+Más allá de los desafíos visibles como la vivienda o la salud, resulta crucial abordar la dimensión educativa. Esta área a menudo es objeto de una fuerte estigmatización social, debido a la percepción que suele vincular un bajo nivel educativo con un supuesto incremento de la delincuencia. Por esta razón, el presente análisis priorizará el estudio de la escolaridad incompleta en la población migrante adulta que reside en la provincia de Santiago.
+
+## 1.1. Objetivo general
+
+Analizar la prevalencia de la escolaridad incompleta en la población migrante mayor de 18 años, residente en la Región Metropolitana.
+
+## 1.2. Objetivos específicos
+
+-   Calcular a escala de zona censal, el porcentaje de la población migrante adulta y el porcentaje de migrantes adultos con escolaridad incompleta.
+
+-   Examinar la correlación entre estos indicadores.
+
+-   Representar espacialmente la distribución de ambos indicadores y visualizarlo en un mapa bivariado.
+
+------------------------------------------------------------------------
+
+# 2. Desarrollo
+
+## 2.1. Metodología
+
+Para llevar a cabo el presente análisis, se adoptó un enfoque cuantitativo y geoespacial, utilizando como fuente principal los datos censales del año 2017. El área de estudio es la provincia de Santiago junto a las comunas de San Bernardo y Puente Alto.
+
+El procesamiento de los datos se realizó mediante la utilización de dos softwares:
+
+1.  **PGAdmin**:\
+    En este software se trataron los datos mediante consultas SQL, donde se filtró y se agregó la información a nivel de zona censal, centrándose en la población migrante mayor de 18 años y la variable de escolaridad incompleta.
+
+2.  **RStudio**:\
+    Aquí, los datos previamente tratados en PGAdmin se analizaron estadísticamente para la generación de todas las visualizaciones, incluyendo los mapas temáticos y el análisis de correlación.
+
+## 2.1.1. Librerías necesarias
+
+```{r librerias, echo=TRUE, message=FALSE, warning=FALSE}
+library(DBI)
+library(RPostgres)
+library(sf)
+library(ggplot2)
+library(RColorBrewer)
+library(cowplot)
+library(biscale)
+```
+
+## 2.1.2. Conexión a la base de datos PostgreSQL
+
+Los datos brutos del Censo 2017 se encontraban alojados en una base de datos relacional PostgreSQL con su extensión espacial PostGIS. El primer paso metodológico fue establecer una conexión desde R a dicha base de datos.
+
+Mediante la función `dbConnect`, se especificaron las credenciales de acceso, lo que permitió interactuar con los datos de manera remota. Este método posibilitó la ejecución de consultas SQL complejas directamente desde el script, procesando los datos en el servidor para luego importar a R únicamente los resultados agregados a nivel de zona censal.
+
+------------------------------------------------------------------------
+
+## 2.1.3. Indicadores
+
+```{r conexion, echo=FALSE, message=FALSE, warning=FALSE}
+con <- dbConnect(
+  Postgres(),
+  dbname   = "censo_rm_2017",
+  host     = "localhost",
+  port     = 5433,
+  user     = "postgres",
+  password = "postgres"
+)
+```
+
+Las variables consideradas para la creación de los indicadores fueron:
+
+-   **p.p12**: Comuna o País de Nacimiento.\
+-   **p.p09**: Edad.\
+-   **p.p15**: Nivel del Curso Más Alto Aprobado.
+
+El foco principal del análisis fue la creación de dos indicadores a nivel de la zona censal urbana, los cuales fueron calculados mediante consultas SQL que contenían información de las tablas de personas, viviendas y hogares.
+
+```{r sql, message=FALSE, warning=FALSE, include=FALSE}
+########################
+## 3) Consulta SQL #####
+########################
+
+sql_indicadores = "
+
+WITH agg AS 
+(
+SELECT 
+
+z.geocodigo::double precision AS geocodigo,
+c.nom_comuna,
+
+-- INDICADOR 1: Porcentaje de Población Migrante (Adultos).
+-- Fórmula: (Total de migrantes > 18 años / Total de personas > 18 años) * 100
+ROUND(
+    COUNT(*) FILTER (WHERE p.p12 NOT IN (1, 2, 98, 99) AND p.p09 > 18) * 100.0 / 
+    NULLIF(COUNT(*) FILTER (WHERE p.p09 > 18), 0), 2
+    ) AS ptje_migrantes_adultos,
+    
+-- INDICADOR 2: Porcentaje de Migrantes ADULTOS con Escolaridad Incompleta
+-- Fórmula: (Total de migrantes > 18 con escolaridad < 8 / Total de migrantes > 18) * 100
+ROUND(
+    COUNT(*) FILTER (WHERE p.p12 NOT IN (1, 2, 98, 99) AND p.p15 < 8 AND p.p09 > 18) * 100.0 / 
+    NULLIF(COUNT(*) FILTER (WHERE p.p12 NOT IN (1, 2, 98, 99) AND p.p09 > 18), 0), 2
+    ) AS ptje_esc_inc_mig_adultos
+
+FROM public.personas   AS p
+JOIN public.hogares    AS h ON p.hogar_ref_id    = h.hogar_ref_id
+JOIN public.viviendas  AS v ON h.vivienda_ref_id = v.vivienda_ref_id
+JOIN public.zonas      AS z ON v.zonaloc_ref_id  = z.zonaloc_ref_id
+JOIN public.comunas    AS c ON z.codigo_comuna   = c.codigo_comuna
+JOIN public.provincias AS pr ON pr.provincia_ref_id = c.provincia_ref_id
+WHERE (pr.nom_provincia = 'SANTIAGO' OR c.nom_comuna IN ('PUENTE ALTO', 'SAN BERNARDO'))
+GROUP BY z.geocodigo, c.nom_comuna
+)
+SELECT a.geocodigo,
+    shp.geom,
+    a.nom_comuna,
+    a.ptje_migrantes_adultos,
+    a.ptje_esc_inc_mig_adultos
+FROM agg AS a
+JOIN dpa.zonas_censales_rm AS shp ON shp.geocodigo = a.geocodigo
+WHERE shp.urbano = 1;"
+```
+
+```{r ejecuta y guarda , message=FALSE, warning=FALSE, include=FALSE}
+df_indicadores = st_read(con, query = sql_indicadores)
+```
+
+```{r geometria , message=FALSE, warning=FALSE, include=FALSE}
+sql_comunas = "
+
+SELECT geocodigo::double precision AS geocodigo, geom FROM dpa.zonas_censales_rm WHERE urbano = 1 AND (nom_provin = 'SANTIAGO' OR nom_comuna IN ('PUENTE ALTO', 'SAN BERNARDO')); "
+sf_comunas = st_read(con, query = sql_comunas)
+```
+
+#### a. Porcentaje de población migrante adulta
+
+Mide el grado de concentración de la población migrante en cada zona.
+
+**Fórmula:**
+
+$$
+    \text{Porcentaje de migrantes adultos} = \left( \frac{\text{Total de migrantes > 18 años}}{\text{Total de personas > 18 años}} \right) * 100
+    $$
+
+#### b. Porcentaje de población migrante adulta con escolaridad incompleta
+
+**Fórmula:**
+
+$$
+    \text{Porcentaje de migrantes adultos con escolaridad incompleta} = \left( \frac{\text{Total de migrantes > 18 con escolaridad < 8}}{\text{Total de migrantes > 18}} \right) * 100
+    $$
+
+### 2.1.4. Visualización
+
+-   Grafico de dispersión: muestra la correlación entre los dos indicadores ptje_migrantes_adultos (eje X) y ptje_esc_inc_mig_adultos (eje Y), además de mostrar la línea de tendencia para ver si la relación es positiva o negativa.
+-   Mapa univariado: Esta muestra la distribución espacial de cada indicador por separado.
+-   Mapa Bivariado: Este grafico combina ambos indicadores en un solo mapa. Donde este representa simultáneamente por colores el valor de cada indicador por cada zona censal.
+
+## 2.2. Análisis y resultados
+
+### 2.2.1 Gráfico de dispersión
+
+El grafico muestra algo interesante que es la existencia de una correlación negativa, la línea de tendencia naranja va descendiendo, que indica que a medida el porcentaje de población migrante adulta representada en el eje X, tiene a disminuir el porcentaje de esos migrantes que tiene una escolaridad incompleta en el eje Y.
+
+Este resultado es muy revelador debido a que confronta la estigmatización social presentada en la introducción, la cual suele asociar una alta presencia de migración con indicadores de precariedad, como lo es el bajo nivel educativo.
+
+```{r Gráfico de dispersión, echo=FALSE, message=FALSE, warning=FALSE}
+grafico_dispersion <- ggplot(df_indicadores, aes(x = ptje_migrantes_adultos, y = ptje_esc_inc_mig_adultos)) +
+  geom_point(alpha = 0.6, color = "#0072B2") + 
+  geom_smooth(method = "lm", se = FALSE, color = "#D55E00", linetype = "dashed") +
+  labs(
+    title = "Relación entre Migración y Escolaridad Incompleta en Adultos", 
+    subtitle = "Datos por zona censal en la Provincia de Santiago (Censo 2017)",
+    x = "% de Población Migrante Adulta",    
+    y = "% de Migrantes Adultos con Escolaridad Incompleta",
+    caption = "Fuente: Elaboración propia con datos del Censo 2017."
+  ) +
+  theme_minimal() + 
+  theme(plot.title = element_text(face = "bold"))
+print(grafico_dispersion)
+```
+
+### 2.2.2 Mapa 1: Distribución de la Población Migrante Adulta
+
+El primer mapa que es el porcentaje de migrantes adultos, mostro que el patrón es de alta concentración en el centro de la provincia de Santiago.
+
+Las zonas censales con los porcentajes más altos de población migrante (colores amarillos y verdes claros, \>40%) se agrupan de manera compacta en las comunas centrales, como Santiago, Estación Central, Independencia y Recoleta. Este patrón de "centro-periferia" es claro: la concentración de migrantes disminuye drásticamente a medida que nos alejamos de este núcleo, con las zonas periféricas de la provincia (como Puente Alto y San Bernardo) mostrando niveles mucho más bajos (colores morados oscuros, \<10%). Esto sugiere que el centro de la ciudad actúa como el principal polo de atracción y residencia para la población migrante adulta.
+
+```{r Mapas Univariados Migrantes, echo=FALSE, message=FALSE, warning=FALSE}
+mapa_migrantes <- ggplot() +
+  geom_sf(data = df_indicadores, aes(fill = ptje_migrantes_adultos), color = NA) +
+  geom_sf(data = sf_comunas, fill = NA, color = "white", linewidth = 0.5) +
+  scale_fill_viridis_c(name = "% Migrantes \nAdultos") +
+  labs(title = "Distribución de la Población Migrante Adulta",
+       caption = "Fuente: Elaboración propia con datos del Censo 2017.") +
+  theme_void()
+plot_grid(mapa_migrantes)
+```
+
+### 2.2.3. Mapa 2: Escolaridad Incompleta en Migrantes Adultos
+
+El segundo mapa que es el porcentaje de escolaridad incompleta de la población migrante, mostro que el patrón es casi inverso al primero. Las zonas con las tasas más altas de escolaridad incompleta entre migrantes (colores amarillos, \>60%) no se encuentran en el centro. Por el contrario, se ubican en clústeres específicos de la periferia, principalmente en las zonas sur y poniente del área de estudio. El núcleo central (Santiago, Independencia, etc.), que albergaba a la mayor cantidad de migrantes, muestra ahora las tasas más bajas de escolaridad incompleta (colores morados oscuros).
+
+La comparación directa de ambos mapas confirma visualmente la correlación negativa identificada en el gráfico de dispersión. Se pueden identificar dos perfiles territoriales predominantes: 1. Perfil Centro (Alta Migración / Alta Escolaridad): Zonas del núcleo de la ciudad que atraen a un gran volumen de población migrante, la cual, en promedio, posee un mayor nivel educativo (básica completa o más). Esto refuerza la hipótesis de que el centro atrae a migrantes para roles en servicios, comercio o por estudios. 2. Perfil Periferia (Baja Migración / Baja Escolaridad): Zonas de la periferia que, si bien tienen una baja densidad total de migrantes, los grupos que allí residen presentan una mayor vulnerabilidad educativa.
+
+```{r Mapas Univariado Escolaridad, echo=FALSE, message=FALSE, warning=FALSE}
+mapa_escolaridad <- ggplot() +
+  geom_sf(data = df_indicadores, aes(fill = ptje_esc_inc_mig_adultos), color = NA) +
+  geom_sf(data = sf_comunas, fill = NA, color = "white", linewidth = 0.5) +
+  scale_fill_viridis_c(name = "% Esc. Incompleta \nen Migrantes Adultos") +
+  labs(title = "Escolaridad Incompleta en Migrantes Adultos",
+       caption = "Fuente: Elaboración propia con datos del Censo 2017.") +
+  theme_void()
+plot_grid(mapa_escolaridad)
+```
+
+## Comparativa de Migración y Escolaridad
+
+```{r Mapas Univariados M y E, echo=FALSE, message=FALSE, warning=FALSE}
+mapa_migrantes <- ggplot() +
+  geom_sf(data = df_indicadores, aes(fill = ptje_migrantes_adultos), color = NA) +
+  geom_sf(data = sf_comunas, fill = NA, color = "white", linewidth = 0.5) +
+  scale_fill_viridis_c(name = "% Migrantes \nAdultos") +
+  labs(title = "Población Migrante Adulta",
+       ) +
+  theme_void() +
+  theme(legend.position = "bottom")
+mapa_escolaridad <- ggplot() +
+  geom_sf(data = df_indicadores, aes(fill = ptje_esc_inc_mig_adultos), color = NA) +
+  geom_sf(data = sf_comunas, fill = NA, color = "white", linewidth = 0.5) +
+  scale_fill_viridis_c(name = "% Esc. Incompleta \nen Migrantes Adultos") +
+  labs(title = "Escolaridad Incompleta en Migrantes Adultos") +
+  theme_void() +
+  theme(legend.position = "bottom")
+plot_grid(mapa_migrantes, mapa_escolaridad,align = "h" )
+```
+
+### 2.2.4. Mapa bivariado:
+
+El mapa utiliza una paleta de colores 3x3 donde el eje X representa el % de Migrantes Adultos (aumentando hacia el azul oscuro) y el eje Y representa el % de Escolaridad Incompleta (aumentando hacia el rosado). El análisis del mapa bivariado confirma de manera contundente la correlación negativa y la segregación espacial. Se identifican dos patrones principales y una ausencia notable:
+
+-   Patrón 1: El Núcleo de Migración Calificada (Color Azul Oscuro) Se observa un clúster dominante de color azul oscuro en el corazón de la ciudad, coincidiendo con las comunas centrales (Santiago, Estación Central, Independencia). Este color representa la combinación de Alto % de Migrantes y Bajo % de Escolaridad Incompleta. Este es el perfil predominante en el centro: zonas que son polos de atracción para una gran cantidad de migrantes adultos que, en su mayoría, ya han completado su educación básica.
+
+-   Patrón 2: Focos de Vulnerabilidad Periférica (Color Rosado) En claro contraste, se identifican clústeres de color rosado en zonas específicas de la periferia sur y poniente (comunas como Puente Alto, San Bernardo, Lo Espejo). Este color representa la combinación opuesta: Bajo % de Migrantes y Alto % de Escolaridad Incompleta. Este hallazgo es crucial, ya que identifica los territorios que, aunque no son receptores masivos de migración, los grupos migrantes que sí residen allí enfrentan una precariedad educativa significativamente mayor. La Ausencia del Cuadrante de Doble Vulnerabilidad (Color Morado oscuro) Quizás el hallazgo más importante es la casi total ausencia de zonas de color morado oscuro. Este color representaría el cuadrante de "Alto-Alto" (alto % de migrantes y alto % de escolaridad incompleta). La inexistencia de este patrón desafía el estigma de que las zonas con alta densidad de migrantes son, por defecto, focos de baja educación. Los datos de Santiago muestran que este perfil de doble vulnerabilidad no es una característica estructural de la ciudad.
+
+```{r Mapa bivariado, echo=FALSE, message=FALSE, warning=FALSE}
+df_bivariado <- bi_class(df_indicadores, x = ptje_migrantes_adultos, y = ptje_esc_inc_mig_adultos, style = "jenks", dim = 3)
+
+# Crear el mapa
+mapa_biv <- ggplot() +
+  geom_sf(data = df_bivariado, aes(fill = bi_class), color = "white", size = 0.1, show.legend = FALSE) +
+  bi_scale_fill(pal = "DkBlue", dim = 3) +
+  geom_sf(data = sf_comunas, fill = NA, color = "white", linewidth = 0.5) +
+  labs(
+    title = "Mapa Bivariado: Migración y Escolaridad en Adultos",
+    subtitle = "Provincia de Santiago, por zona censal",
+    caption = "Fuente: Elaboración propia con datos del Censo 2017"
+  ) +
+  theme_void() +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5), plot.subtitle = element_text(hjust = 0.5))
+leyenda_biv <- bi_legend(pal = "DkBlue",
+                         dim = 3,
+                         xlab = "% Migrantes Adultos ", 
+                         ylab = "% Esc. Incompleta ",
+                         size = 8) 
+final_plot <- ggdraw() +
+  draw_plot(mapa_biv, 0, 0, 1, 1) +
+  draw_plot(leyenda_biv, 0.05, 0.05, 0.25, 0.25) 
+print(final_plot)
+```
+
+# 3. Conclusión
+
+Este análisis respondió al objetivo general de estudiar la relación entre la población migrante adulta y la escolaridad incompleta, revelando una dinámica clara y contraria al estigma social. El hallazgo principal de esta investigación es la existencia de una correlación negativa entre ambas variables: a medida que aumenta la concentración de migrantes adultos en una zona censal, disminuye la tasa de escolaridad incompleta dentro de ese mismo grupo. Los datos demuestran que las zonas de alta migración en la Región Metropolitana (principalmente el centro de la provincia) no son focos de precariedad educativa, sino polos de atracción para migrantes con mayor capital humano.
+
+El análisis fue crucial para entender dónde se manifiesta esta relación, identificando un patrón de segregación inverso al esperado. El mapa bivariado permitió sintetizar los patrones en dos perfiles territoriales opuestos:
+
+1.  El "Núcleo de Migración Calificada" (Zonas Azules): Un clúster dominante en las comunas centrales (Santiago, Estación Central, Independencia) que combina una Alta Tasa de Migración con una Baja Tasa de Escolaridad Incompleta.
+
+2.  Los "Focos de Vulnerabilidad Periférica" (Zonas Rosadas): Clústeres específicos en la periferia (como Puente Alto y San Bernardo) que muestran el perfil opuesto: Baja Tasa de Migración pero una Alta Tasa de Escolaridad Incompleta en los grupos que allí residen.
+
+Finalmente, el trabajo logró resolver los objetivos principales, demostrando ser una herramienta eficaz para comprender la complejidad del comportamiento residencial de la población migrante. Lejos de ser un grupo homogéneo, el análisis espacial reveló la existencia de dos perfiles territoriales opuestos: un núcleo de migración con alto capital humano concentrado en el centro de la ciudad, y focos de alta vulnerabilidad educativa en la periferia.
+
+Esta segmentación es crucial, ya que permite realizar cambios o diseñar políticas de manera eficiente, facilitando una toma de decisiones basada en evidencia. En lugar de aplicar estrategias genéricas, los resultados de este estudio permiten focalizar con precisión los recursos, ya sean de índole pública (políticas de nivelación de estudios) o privada (estrategias de geomarketing), ajustándolos a las necesidades y características distintas de cada territorio identificado.
+
+# 4. Bibliografía
+
+-   Stefoni, C., & Fernández, R. (2011). Segregación residencial y nichos étnicos de los inmigrantes internacionales en el Área Metropolitana de Santiago. Revista EURE - Revista de Estudios Urbano Regionales, 37(111), 99-128.
+
+-   Cano, V., & Soffia, M. (2018). El perfil educativo de la nueva migración en Chile. Centro de Estudios Públicos (CEP). Documento de Trabajo N° 475.
+
+-   Ruiz-Tagle, J., & López-Morales, E. (2014). El estudio de la segregación residencial en Santiago de Chile: revisión crítica de algunos problemas metodológicos y conceptuales. Revista EURE - Revista de Estudios Urbano Regionales, 40(119), 25-48.
+
+-   Sabatini, F., Wormald, G., & Rasse, A. (2017). ¿Es posible la integración residencial en las ciudades chilenas? Disposición a la integración y actitudes frente a la política de vivienda. Revista EURE - Revista de Estudios Urbano Regionales, 43(130), 129-153.
