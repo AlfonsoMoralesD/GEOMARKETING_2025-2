@@ -1,0 +1,302 @@
+---
+title: "Microsimulación espacial de la población afiliada a los sistemas de salud previsional en el Gran Santiago"
+author: "Alfonso Rolando Morales Donoso"
+date: "`r Sys.Date()`"
+output: html_document
+self_contained: true
+---
+
+```{r setup, include=FALSE}
+library(rprojroot)
+library(rakeR)
+library(sf)
+library(ggplot2)
+library(data.table)
+library(cowplot)
+library(dplyr)
+
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+```
+
+# 1. Introducción
+
+El sistema de salud en chile se caracteriza por presentar una estructura la cual se encuentra dividida en el sistema de salud pública (FONASA) y una privada (ISAPRE) (Superintendencia de Salud, s.f), y la distribución de los afiliados no es homogénea, lo que significa que va a depender de variables socioeconómicas y demográficas (Mac-Clure & Calvo, 2013), para su distribución, el conocimiento de esta información es de suma importancia, ya que mantener esta información permite que se generen políticas públicas, se asignen correctamente los recursos, además de que este estudio nos permitirá evaluar la equidad para el acceso a la salud. Sin embargo, los datos sobre los afiliados provienen principalmente de encuestas como la CASEN, la cual presenta una representatividad a nivel comunal y regional, pero con una limitante, ya que esta no entrega información detallada a microescala lo que dificulta el análisis por la carecía de información geográfica, por otro lado, el censo nos ofrece información de la población y la vivienda la cual nos permitirá tener una cobertura total a nivel de zona censal, pero esta no incluye la variable de la afiliación al sistema de salud. Por lo que este trabajo presentara una solución metodología para este vacío de información, mediante la técnica de micro simulación, en la cual se generara una población sintética a nivel de la zona censal para el Gran Santiago, con el fin de poder realizar un cruce de la información de las encuestas y poder llevarlo a un análisis territorial.
+
+## 1.1 Objetivo General
+
+Estimar la distribución de la población según el sistema previsional al cual pertenece (FONASA e ISAPRE), en el gran Santiago, utilizando la información proveniente en la encuesta CASEN y el CENSO.
+
+## 1.2 Objetivos Específicos
+
+-   Desarrollar una población sintética en las comunas para poder evaluar la afiliación de salud a nivel zona cenal.
+
+-   Analizar la distribución espacial de los afiliados a FONASA e ISAPRE.
+
+-   Identificar patrones territoriales asociados al sistema de salud.
+
+## 1.3 Variables Seleccionadas
+
+La variable seleccionada fue la variable `s13` que responde a la pregunta ¿A qué sistema previsional de salud pertenece? Perteneciente a la encuesta CASEN 2022, para los fines del análisis, la variable fue filtrada para incluir únicamente las categorías principales del sistema de aseguramiento Chileno, las cuales tenían la mayor representatividad, debido a la gran cantidad de datos que manejaba 1. FONASA = 1. 2. ISAPRE = 2. Para este análisis se consideraron solamente FONASA e ISAPRE, por su relevancia poblacional, ya que esta variable se encuentra muy relacionada con los niveles de ingreso y educación, y por ende, a la segregación socioeconómica que se encuentra presente en el Gran Santiago (Ministerio de Desarrollo Social y Familia, 2025.).
+
+# 2. Desarrollo
+
+## 2.1 Metodología
+
+Para el desarrollo metodológico del presente trabajo se utilizó la herramienta de Rstudio, con el fin de poder procesar, analizar y visualizar los datos provenientes de las encuestas CASEN y CENSO, con el fin de poder realizar la micro simulación espacial por grupo etario.
+
+### 2.1.1 Librerías utilizadas Se utilizaron las siguientes librerías en Rstudio:
+
+| Librería | Propósito |
+|--------------------------|---------------------------------------------|
+| `rakeR` | Ayuda en el cálculo de los pesos y la generación de la población. |
+| `sf` | Manejo de datos espaciales para poder trabajar y diseñas los mapas. |
+| `ggplot2` | Utilizado para la visualización de los mapas. |
+| `data.table` | Utilizado para combinar los datos de las encuestas. |
+| `cowplot` | Organización de los mapas, para poder mostrar los mapas en paneles juntos. |
+| `dplyr` | Manipulación de datos y agregación (Tratamiento de datos). |
+
+### 2.1.2 Carga y preparación de datos
+
+Se utilizaron los datos de población provenientes del CENSO 2017 que contiene la información de la población por zona censal `(GEOCODIGO)`, la base de datros de la encuesta CASEN 2022 la cual contiene la información de la Región Metropolitana y su información de las variables demográficas `(s13)`, además de utilizar el archivo Geojson el cual contiene la información espacial de las zonas censales del Gran Santiago.
+
+```{r Archivos, echo=TRUE, message=FALSE, warning=FALSE}
+cons_censo_df <- readRDS("Data/cons_censo_df.rds")     
+casen_raw <- readRDS("Data/casen_rm.rds")     
+zonas_gs <- sf::st_read("Data/zonas_gs_ingreso.geojson", quiet = TRUE)
+```
+
+### 2.1.3 Procesamiento de los datos
+
+En esta etapa se realizó un ajuste para la encuesta CASEN con el fin de que los resultados de eta encuesta coincidan con la estructura y la cantidad de personas que muestra el CENSO, para así tener una realidad de la población. Los pasos para realizar: Se seleccionaron las variables bases vars_base y se extrajo el código de las comunas, para luego se conviertieran en variables y las transformamos a formato numérico para así poder trabajarlos, por ultimo se seleccionaron exclusivamente los individuos afiliados a los sistemas de salud que se están estudiando FONASA `(s13 == 1)` e ISAPRE `(s13 == 2)`.
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+vars_base <- c("estrato", "esc", "edad", "sexo", "e6a", "s13") 
+casen <- casen_raw[, vars_base, drop = FALSE] 
+rm(casen_raw) 
+
+casen$Comuna <- substr(as.character(casen$estrato), 1, 5) 
+casen$estrato <- NULL 
+
+casen$esc <- as.integer(unclass(casen$esc)) 
+casen$edad <- as.integer(unclass(casen$edad)) 
+casen$sexo <- as.integer(unclass(casen$sexo)) 
+casen$e6a <- as.numeric(unclass(casen$e6a))
+casen$s13 <- as.integer(unclass(casen$s13)) 
+
+casen <- casen[casen$s13 %in% c(1, 2), ]
+```
+
+### 2.1.4 Imputación y categorización
+
+La variable de escolaridad `(esc)` presentaba valores No Aplica `(NA)` lo que dificulta el tratado y análisis de los datos, por lo que para evitar la exclusión de todos estos casos y poder mantener la coherencia de la muestra, se aplicó una imputación, donde se utilizó una regresión lineal con el fin de predecir la escolaridad `(esc)` en función de los años de escolaridad aprobados `(e6a)`, por lo que los valores que se pierden fueron reemplazados por las predicciones que fueron generados por el modelo, las cuales fueron redondeadas para obtener un valor entero en años.
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+idx_na <- which(is.na(casen$esc))
+if (length(idx_na) > 0) {
+fit <- lm(esc ~ e6a, data = casen[-idx_na,])
+pred <- predict(fit, newdata = casen[idx_na, , drop = FALSE])
+casen$esc[idx_na] <- as.integer(round(pmax(0, pmin(29, pred))))
+}
+casen$ID <- as.character(seq_len(nrow(casen)))
+```
+
+Para realizar la calibración con la librería `raker`, fue necesario asegurar que exista una coincidencia exacta para las variables de la BD de la encuesta CASEN y las categorías definidas para los datos del CENSO. Por lo que se generaron nuevas variables categóricas que tienen el sufijo `(cat)` para los siguientes procedimientos:
+
+1.  Edad `(edad_cat)`: La edad se agrupo por tramos definidos por el CENSO utilizando la función `cut()` el cual nos permitió convertir los valores que pueden tomar cualquier valor en un conjunto finito y ordenado de categorías lo que nos permite reducir una gran cantidad de valores únicos en grupos manejables para el estudio.
+
+2.  Escolaridad `(esc_cat)`: La escolaridad se recodifico en cuatro niveles (Nunca asistido, Básica, Media y Superior).
+
+3.  Sexo `(sexo_cat)`: La variable sexo se cambió el código numérico del **sexo (1 o 2)** por una palabra **clave específica ("sexo_hombre" o "sexo_mujer")** para que el proceso de calibración de datos pudiera reconocer y comparar las categorías con las del Censo sin errores.
+
+```{r Categorización, echo=FALSE, message=FALSE, warning=FALSE}
+cons_censo_df$COMUNA <- substr(as.character(cons_censo_df$COMUNA), 1, 5)
+casen$Comuna <- substr(as.character(casen$Comuna), 1, 5)
+comunas_validas <- unique(cons_censo_df$COMUNA)
+casen <- casen %>% filter(Comuna %in% comunas_validas)
+
+cons_censo_comunas <- split(cons_censo_df, cons_censo_df$COMUNA)
+inds_list <- split(casen, casen$Comuna)
+```
+
+```{r Variables Categóricas, echo=TRUE, message=FALSE, warning=FALSE}
+inds_list <- lapply(inds_list, function(df) {
+
+#Edad
+
+df$edad_cat <- cut(df$edad,
+breaks = c(0, 30, 40, 50, 60, 70, 80, Inf),
+labels = c("edad_0_30", "edad_30_40", "edad_40_50",
+"edad_50_60", "edad_60_70", "edad_70_80", "edad_mayor_80"),
+right = FALSE)
+
+#Escolaridad
+
+df$esc_cat <- cut(df$esc,
+breaks = c(-Inf, 0, 8, 12, Inf),
+labels = c("esco_0", "esco_1_8", "esco_8_12", "esco_mayor_12"),
+right = TRUE)
+
+#Sexo
+
+df$sexo_cat <- ifelse(df$sexo == 1, "sexo_m", "sexo_f")
+df
+})
+```
+
+```{r simulacion, echo=FALSE, message=TRUE, warning=FALSE}
+sim_list <- lapply(names(cons_censo_comunas), function(zona) {
+  tryCatch({
+    cons_i <- cons_censo_comunas[[zona]]
+    tmp <- inds_list[[zona]]
+    if (is.null(tmp) || nrow(tmp) == 0) return(NULL)
+    
+    col_order <- sort(setdiff(names(cons_i), c("COMUNA", "GEOCODIGO")))
+    cons_i <- cons_i[, c("GEOCODIGO", col_order), drop = FALSE]
+    
+    vars_needed <- c("ID", "edad_cat", "esc_cat", "sexo_cat")
+    if (!all(vars_needed %in% names(tmp))) return(NULL)
+    
+    inds_i <- tmp[, vars_needed, drop = FALSE]
+    names(inds_i) <- c("ID", "Edad", "Escolaridad", "Sexo")
+    
+    w_frac <- weight(cons = cons_i, inds = inds_i, vars = c("Edad", "Escolaridad", "Sexo"))
+    sim_i <- integerise(weights = w_frac, inds = inds_i, seed = 123)
+    
+    tmp_sub <- tmp[, c("ID", "s13", "edad")]
+    sim_i$ID <- as.character(sim_i$ID)
+    tmp_sub$ID <- as.character(tmp_sub$ID)
+    
+    out <- merge(sim_i, tmp_sub, by = "ID", all.x = TRUE)
+    if (!("zone" %in% names(out))) out$zone <- as.character(cons_i$GEOCODIGO[1])
+    out$COMUNA <- zona
+    out
+  }, error = function(e) NULL)
+})
+
+sim_list <- Filter(Negate(is.null), sim_list)
+if (length(sim_list) == 0) stop("No se generaron simulaciones válidas.")
+sim_df <- data.table::rbindlist(sim_list, fill = TRUE)
+```
+
+### 2.1.5 Microsimulación
+
+Aquí es donde se desarrolló la microsimulación generando la población sintética, donde el objetivo era tomar las características de salud de la encuesta CASEN y distribuirlas correctamente en el mapa, donde nos basamos en la estructura de población entregada por el CENSO zona censal, este nos permitió realizar la conexión entre la información de ambas fuentes las que presentan limitaciones, dado que el CENSO tiene cobertura total pero carece del dato de salud, mientras que CASEN tiene el dato de salud pero solo es representativo a nivel de comuna. El proceso se realizo en R, usando el paquete `rakeR` y se realizó en tres pasos:
+
+1.  Ajuste de pesos: Se utilizo la función `weight()` para ajustar la muestra de CASEN en forma que su estructura demográfica (por edad, escolaridad y sexo) coincidiera exactamente con la del CENSO en cada comuna.
+
+2.  Generación sintética: Se utilizo la función `integerise()` donde se tomo esos ajustes y se transformaron los pesos en valores enteros, lo que permite generar individuos dentro de cada zona censal.
+
+3.  Análisis final: A cada individuo se le asigno un grupo etario y un sistema de salud, lo que permite que el calculo de los porcentajes de afiliados por zona censal. En base a esta metodología nos entregó la población simulada o población sintética, que realmente refleja las características del territorio, este ayudándonos a estimar la distribución de los afiliados a FONASA e ISAPRE.
+
+```{r, echo=FALSE, message=TRUE, warning=FALSE}
+sim_df <- sim_df %>%
+mutate(
+grupo_edad = cut(
+edad,
+breaks = c(18,29,59,Inf),
+labels = c("Adultos jóvenes (18–29)", "Adultos (30–59)", "Mayores (60+)"),
+right = TRUE
+),
+fonasa = ifelse(s13 == 1, 1, 0),
+isapre = ifelse(s13 == 2, 1, 0),
+geocodigo = as.character(zone)
+)
+
+salud_edad <- sim_df %>%
+group_by(geocodigo, grupo_edad) %>%
+summarise(
+n_total = n(),
+n_fonasa = sum(fonasa, na.rm = TRUE),
+n_isapre = sum(isapre, na.rm = TRUE),
+.groups = "drop"
+) %>%
+mutate(
+ptje_fonasa = 100 * n_fonasa / pmax(1, n_total),
+ptje_isapre = 100 * n_isapre / pmax(1, n_total)
+)
+
+zonas_salud_edad <- merge(zonas_gs, salud_edad, by = "geocodigo", all.x = TRUE)
+```
+
+## 2.2 Análisis y resultados
+
+### 2.2.1 FONASA
+
+Se logra apreciar que para la simulación de los afiliados a Fonasa en los diferentes grupos etarios (adultos jóvenes y adultos/mayores), el patrón de distribución espacial es muy parecido, con pequeñas diferencias muy mínimas en ciertas zonas censales, por lo que es de esperarse este resultado debido a que la afiliación a un sistema de salud (FONASA) depende de las características socioeconómicas de la población, específicamente del nivel de ingreso y la situación laboral, presentando un alto grado de homogeneidad en el Gran Santiago, exceptuando el sector oriente como en las comunas de Vitacura, Lo Barnechea y Las Condes, que es donde se concentra la población con mayor ingreso, el hecho de que las tasas de afiliación a FONASA sean conscientemente altas (Superiores al 70%) en las **zonas periféricas y del sector sur**, tanto para los adultos jóvenes como para los adultos y Mayores, este estaría sugiriendo que la dependencia del sistema publico es estructural en esas comunas. Para los jóvenes, esto puede reflejar la baja inserción laboral formal o ingresos iniciales más bajos, mientras que, para el grupo de Adultos y Mayores, refleja la trayectoria laboral y la previsión de la tercera edad, donde la mayoría tiende a converger al aseguramiento público, incluso si cotizaron en ISAPRE previamente.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+col_comuna <- grep("comuna", names(zonas_gs), ignore.case = TRUE, value = TRUE)[1]
+comunas_sf <- zonas_gs %>%
+  group_by(.data[[col_comuna]]) %>%
+  summarise(geometry = st_union(geometry), .groups = "drop") %>%
+  rename(COMUNA = !!sym(col_comuna))
+centroides_comunas <- st_centroid(comunas_sf)
+centroides_comunas <- cbind(centroides_comunas, st_coordinates(centroides_comunas))
+colores_gradiente <- c("#FFFFB2", "#FECC5C", "#FD8D3C", "#F03B20", "#BD0026")
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+mapa_fonasa_jovenes <- ggplot() +
+  geom_sf(data = filter(zonas_salud_edad, grupo_edad == "Adultos jóvenes (18–29)"),
+          aes(fill = ptje_fonasa), color = NA) +
+  geom_sf(data = comunas_sf, fill = NA, color = "grey30", size = 0.1) +
+  geom_text(data = centroides_comunas, aes(X, Y, label = COMUNA), size = 1.5, color = "black", fontface = "bold") +
+  scale_fill_gradientn(colors = colores_gradiente, name = "% FONASA", limits = c(0,100), na.value = "grey90") +
+  labs(title = "FONASA - Adultos Jóvenes", subtitle = "Microsimulación CASEN–CENSO") +
+  theme_void() +
+  theme(plot.title = element_text(size = 10, face = "bold", hjust = 0.5),
+        legend.position = "bottom")
+mapa_fonasa_adultos <- ggplot() +
+  geom_sf(data = filter(zonas_salud_edad, grupo_edad %in% c("Adultos (30–59)", "Mayores (60+)")),
+          aes(fill = ptje_fonasa), color = NA) +
+  geom_sf(data = comunas_sf, fill = NA, color = "grey30", size = 0.1) +
+  geom_text(data = centroides_comunas, aes(X, Y, label = COMUNA), size = 1.5, color = "black", fontface = "bold") +
+  scale_fill_gradientn(colors = colores_gradiente, name = "% FONASA", limits = c(0,100), na.value = "grey90") +
+  labs(title = "FONASA - Adultos y Mayores", subtitle = "Microsimulación CASEN–CENSO") +
+  theme_void() +
+  theme(plot.title = element_text(size = 10, face = "bold", hjust = 0.5),
+        legend.position = "bottom")
+plot_grid(mapa_fonasa_jovenes,mapa_fonasa_adultos)
+```
+
+### 2.2.2 ISAPRE
+
+Se logra apreciar que, para la simulación de los afiliados a ISAPRE, se confirma el patrón de segregación espacial, el cual fue identificado en el análisis para los afiliados a FONASA, pero esta vez de manera inversa. Por lo que, a diferencia de FONASA, donde la concentración de datos espaciales se encuentra distribuida en las comunas periféricas, los afiliados a ISAPRE se concentran en las comunas del sector oriente mencionadas anteriormente **(Vitacura, Lo Barnechea, Las Condes)**, donde las concentraciones superan el 70% en las mayoría de las zonas censales de estas comunas, por lo que se podría comparar a que la distribución de ISAPRE es prácticamente un espejo inverso de la distribución de FONASA, mostrando que las comunas de mayor ingreso son las que predominan los aseguramientos privados, por lo que esto llega a sugerir que la afiliación familiar y la residencia en áreas de altos ingresos son factores determinantes, para la selección de un sistema u otro, independientemente de la etapa del ciclo de vida del individuo.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+mapa_isapre_jovenes <- ggplot() +
+  geom_sf(data = filter(zonas_salud_edad, grupo_edad == "Adultos jóvenes (18–29)"),
+          aes(fill = ptje_isapre), color = NA) +
+  geom_sf(data = comunas_sf, fill = NA, color = "grey30", size = 0.1) +
+  geom_text(data = centroides_comunas, aes(X, Y, label = COMUNA), size = 1.5, color = "black", fontface = "bold") +
+  scale_fill_gradientn(colors = colores_gradiente, name = "% ISAPRE", limits = c(0,100), na.value = "grey90") +
+  labs(title = "ISAPRE - Adultos Jóvenes", subtitle = "Microsimulación CASEN–CENSO") +
+  theme_void() +
+  theme(plot.title = element_text(size = 10, face = "bold", hjust = 0.5),
+        legend.position = "bottom")
+
+mapa_isapre_adultos <- ggplot() +
+  geom_sf(data = filter(zonas_salud_edad, grupo_edad %in% c("Adultos (30–59)", "Mayores (60+)")),
+          aes(fill = ptje_isapre), color = NA) +
+  geom_sf(data = comunas_sf, fill = NA, color = "grey30", size = 0.1) +
+  geom_text(data = centroides_comunas, aes(X, Y, label = COMUNA), size = 1.5, color = "black", fontface = "bold") +
+  scale_fill_gradientn(colors = colores_gradiente, name = "% ISAPRE", limits = c(0,100), na.value = "grey90") +
+  labs(title = "ISAPRE - Adultos y Mayores", subtitle = "Microsimulación CASEN–CENSO") +
+  theme_void() +
+  theme(plot.title = element_text(size = 10, face = "bold", hjust = 0.5),
+        legend.position = "bottom")
+plot_grid(mapa_isapre_jovenes,mapa_isapre_adultos )
+```
+
+# 3. Conclusiones
+
+El presente estudio permitió estimar y analizar la distribución espacial de la población afiliada a los sistemas de salud previsionales en el Gran Santiago, mediante la aplicación de la microsimulacion espacial, integrando información proveniente del CENSO y CASEN, el uso conjunto de los datos permitió aproximar con mayor detalle la estructura demográfica del territorio y, a partir de este, genera las estimaciones con mayor precisión y detalle de los afiliados a FONASA e ISAPRE a nivel de zona censal. La microsimulacion demostró ser de suma importancia para superar las limitaciones de representatividad de las encuestas tradicionales que tiene una mayor utilidad para análisis comunales y regionales. Al crear una población sintética que reproduce el comportamiento de la población real, logramos mapear dónde vive realmente cada afiliado, lo que nos permitió visualizar patrones de segregación. Los resultados obtenidos mostraron una diferencia espacial muy clara entre los dos sistema as de salud, ya que como se menciono anteriormente las comunas periféricas y del sector sur predominan los afiliados a FONASA, lo que refleja la dependencia de gran parte de la población por el sector público, mientras que para las comunas del sector oriente, tenia una mayor predominancia quienes pertenecen y utilizan el sector privado, mostrando así una conexión entre donde se encuentra ubicado el individuo y los niveles de ingresos que estos tienen, evidencia la persistencia de un modelo urbano segmentado, donde la capacidad económica y la localización territorial condicionan el tipo de cobertura sanitaria a la que se accede. Por otra parte, al analizar la situación por grupo etario, el patrón de desigualdad se mantiene, debido a que, en los grupos jóvenes, la alta presencia en FONASA suele asociarse con los desafíos de la inserción laboral inicial y los ingresos limitados, mientras que, en los grupos de adultos y mayores, la afiliación a ISAPRE solo logra mantenerse en las áreas de altos ingresos. Esto sugiere que la segregación en el acceso al sistema de salud no es un fenómeno puntual, sino que se arrastra y se consolida a lo largo de todo el ciclo de vida de los habitantes. Por lo que, en términos generales, los resultados obtenidos confirman que el sistema previsional Chileno refleja las desigualdades demográficas presentes en el Gran Santiago, por lo que evidencia que la distribución del territorio en base a la afiliación de los diferentes sistemas de salud, este se encuentra fuertemente marcado por el territorio, la educación y los ingresos de cada uno de los individuos generando así una segregación de cómo se distribuye la sociedad en el territorio en base a la salud previsional.
+
+# 4. Bibliografía
+
+1.  Mac-Clure, Ó., & Calvo, R. (2013). Desigualdades sociales y tipos de territorios en Chile. Polis: Revista Latinoamericana, 12(34), 467-490. <https://doi.org/10.4067/S0718-65682013000100023>.
+2.  Superintendencia de Salud. (s. f.). ¿FONASA o ISAPRE? Gobierno de Chile. Recuperado de <https://www.superdesalud.gob.cl/orientacion-en-salud/fonasa-o-isapre/>.
+3.  Biblioteca del Congreso Nacional de Chile (BCN). (2018). Sistema de Salud en Chile. Recuperado de <https://www.bcn.cl/obtienearchivo?id=repositorio%2F10221%2F27987%2F1%2FIA_10_2018_Sistemas_Salud_Chile_FINAL.pdf>.
+4.  Crespo, R., Álvarez, C., Hernández, I., & García, C. (2020). A spatially explicit analysis of chronic diseases in small areas: A case study of diabetes in Santiago, Chile. International Journal of Health Geographics, 19, 24. <https://doi.org/10.1186/s12942-020-00217-1>.
+5.  Ministerio de Desarrollo Social y Familia. (2022). Resultados CASEN 2022 – Salud. Recuperado de <https://observatorio.ministeriodesarrollosocial.gob.cl/storage/docs/casen/2022/Resultados_Salud_Casen2022.pdf>.
+6.  Jones, P. M. (2017). rakeR: Easy Spatial Microsimulation (Raking) in R. Retrieved from <https://philmikejones.github.io/rakeR/>
