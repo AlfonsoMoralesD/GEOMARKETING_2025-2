@@ -1,0 +1,455 @@
+---
+title: "Caracterización territorial mediante clustering socioeconómico y microsimulación en el Gran Santiago"
+author: "Alfonso Rolando Morales Donoso"
+date: "`r Sys.Date()`"
+output: html_document
+self_contained: true
+---
+
+```{r setup, include=FALSE}
+library(rakeR)
+library(sf)
+library(ggplot2)
+library(data.table)
+library(dplyr)
+library(DBI)
+library(RPostgres)
+library(factoextra)
+library(cluster)
+library(vegan)
+library(RColorBrewer)
+library(corrplot)
+library(tidyr)
+library(knitr)
+
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+```
+
+# 1. Introducción
+
+La estructura del sistema previsional de salud chileno se caracteriza por la coexistencia de dos modelos principales: el sistema público administrado por el Fondo Nacional de Salud (FONASA) y el sistema privado compuesto por las Instituciones de Salud Previsional (ISAPRE). Según la Superintendencia de Salud (s.f.), la participación en uno u otro sistema depende de factores socioeconómicos, entre ellos el nivel de ingresos, el empleo formal y la localización territorial. Las desigualdades en acceso, distribución geográfica y capacidad de financiamiento han sido documentadas en estudios previos, donde se destaca que la afiliación al sistema privado se concentra en territorios con mayores niveles educativos e ingresos, especialmente en el sector oriente de Santiago (Mac-Clure & Calvo, 2013; BCN, 2018). Sin embargo, la disponibilidad de datos geoespaciales detallados a nivel de zona censal ha sido históricamente limitada.
+
+Este trabajo tiene como finalidad aplicar análisis de clustering sobre los resultados de microsimulación desarrollados en el Trabajo 2, utilizando técnicas de aprendizaje no supervisado para identificar agrupaciones territoriales según patrones socioeconómicos asociados al tipo de afiliación previsional (FONASA/ISAPRE), ingreso estimado y tamaño del hogar.
+
+## 1.1 Objetivo general
+
+Identificar patrones territoriales en la distribución de afiliación previsional en el Gran Santiago mediante análisis de clustering aplicado a datos microsimulados y censales.
+
+## 1.2 Objetivos específicos
+
+-   Integrar variables simuladas (Fonasa/Isapre, ingreso) con variables censales (tamaño del hogar) a nivel de zona censal.
+-   Aplicar un algoritmo de clustering (k-means) y determinar el número óptimo de grupos utilizando el Método del Codo.
+-   Generar visualizaciones geográficas de los clusters obtenidos.
+-   Analizar la variabilidad intracomunal utilizando el índice de Shannon para evaluar diversidad interna.
+-   Interpretar los resultados en términos de segregación territorial, brechas socioeconómicas y patrones espaciales.
+
+# 2. Desarrollo
+
+## 2.1 Metodología
+
+Para el desarrollo metodológico se realizó en el software R, integrando herramientas SIG, microsimulación, consultas en base de datos PostgreSQL/PostGIS y análisis estadístico, con el fin de poder evaluar como es la relación entre las diferentes variables propuestas, para este analisis se utilizara la variable microsimulada del Trabajo 2 (`s13 - ¿A que sistema de previsión pertenece?` }), con la variable de habitantes o tamaño del hogar (`cant_per - Cantidad de Personas`), ademas de complementar con un analisis de los ingresos (`ypc - Ingreso total per cápita del hogar corregido`) de los hogares para asi generar un estudio robusto en base a información.
+
+### 2.1.1 Librerías necesarias
+
+| Librería | Propósito |
+|----------------------------------|--------------------------------------|
+| `rakeR` | Útil para procesos de microsimulación y ajuste poblacional, especialmente cuando se buscan estimaciones más cercanas a datos censales. |
+| `sf` | Permite manejar datos espaciales (shapefiles, capas, mapas, etc.) de forma eficiente dentro de R. |
+| `ggplot2` | Se utiliza para crear visualizaciones claras y estéticas, tanto mapas como gráficos estadísticos. |
+| `data.table` | Ideal cuando se trabaja con grandes volúmenes de datos, ya que permite procesarlos rápido y con buena estructura. |
+| `dplyr` | Manipular datos: filtrar, ordenar, resumir o transformar tablas de manera simple. |
+| `DBI` | Librería base para establecer conexiones con bases de datos externas desde R. |
+| `RPostgres` | Extensión de `DBI` diseñada específicamente para conectarse con bases de datos PostgreSQL. |
+| `factoextra` | Facilita la interpretación visual de análisis estadísticos, como clustering de forma clara y entendible. |
+| `cluster` | Funciona para realizar análisis de clúster y evaluar similitudes entre observaciones. |
+| `vegan` | Se usa para calcular índices de Shannon, y evaluar distribución o heterogeneidad en los datos. |
+| `RColorBrewer` | Entrega paletas de colores para mejorar la estética visual de mapas y gráficos. |
+| `corrplot` | Ayuda a visualizar matrices de correlación, permitiendo identificar relaciones fuertes entre variables. |
+| `tidyr` | Permite reordenar y limpiar datos para dejarlos en formato “ordenado” y fácil de analizar. |
+
+En esta sección se incorporan las librerías necesarias para el desarrollo del análisis y la construcción del modelo. Cada una cumple un rol específico dentro del flujo de trabajo: algunas permiten manipular, ordenar y transformar los datos (`dplyr`, `data.table`, `tidyr`), mientras que otras facilitan la creación de visualizaciones y gráficos que ayudan a interpretar mejor los resultados obtenidos (`ggplot2`, `RColorBrewer`, `factoextra`, `corrplot`). Para el análisis estadístico y la identificación de patrones mediante clustering se integran herramientas como (`cluster`, `vegan`), junto con `rakeR` cuando se requiere trabajar con procesos de microsimulación o ajuste poblacional. Además, se utiliza (`sf`) para manejar información espacial y trabajar con mapas de forma eficiente, y finalmente (`DBI`) junto a RPostgres permiten la conexión directa con la base de datos PostgreSQL para realizar consultas, leer o actualizar información, la combinación de estas librerías permite construir un flujo de trabajo ordenado, flexible y reproducible, integrando manejo de datos, análisis espacial, modelamiento estadístico y visualización, asegurando resultados consistentes y comprensibles.
+
+### 2.1.2 Carga y preparación de datos
+
+Se cargaron los datos de la Encuesta Casen, utilizada como base individual para caracterizar a la población, y los datos agregados del Censo por zona censal, los cuales sirven como referencia para asegurar que la población simulada mantenga la distribución real observada en el territorio (por edad, sexo y nivel educativo).
+
+```{r microsimulacion, echo=TRUE, message=FALSE, warning=FALSE}
+
+# Carga de datos
+cons_censo_df <- readRDS("data/cons_censo_df.rds")
+casen_raw     <- readRDS("data/casen_rm.rds")
+
+
+# Pre-Procesamiento CASEN
+
+vars_base <- c("estrato", "esc", "edad", "sexo", "e6a", "s13", "ypc")
+casen <- casen_raw[, vars_base, drop = FALSE]
+rm(casen_raw)
+
+casen$Comuna  <- substr(as.character(casen$estrato), 1, 5)
+casen$estrato <- NULL
+
+casen$esc  <- as.integer(unclass(casen$esc))
+casen$edad <- as.integer(unclass(casen$edad))
+casen$sexo <- as.integer(unclass(casen$sexo))
+casen$e6a  <- as.numeric(unclass(casen$e6a))
+casen$ypc  <- as.numeric(unclass(casen$ypc))
+casen$s13  <- as.integer(unclass(casen$s13))
+
+idx_na <- which(is.na(casen$esc))
+fit  <- lm(esc ~ e6a, data = casen[-idx_na,])
+pred <- predict(fit, newdata = casen[idx_na, , drop = FALSE])
+casen$esc[idx_na] <- as.integer(round(pmax(0, pmin(29, pred))))
+
+casen$ID <- as.character(seq_len(nrow(casen)))
+
+
+#VARIABLES CENSO PARA CONSTRAINTS
+
+col_cons   <- sort(setdiff(names(cons_censo_df), c("GEOCODIGO", "COMUNA")))
+edad_levels  <- grep("^edad", col_cons, value = TRUE)
+esc_levels   <- grep("^esco", col_cons, value = TRUE)
+sexo_levels  <- grep("^sexo", col_cons, value = TRUE)
+
+casen$edad_cat <- cut(
+  casen$edad,
+  breaks = c(0,30,40,50,60,70,80,Inf),
+  labels = edad_levels,
+  right = FALSE, include.lowest = TRUE
+)
+
+casen$esc_cat <- factor(
+  with(casen,
+       ifelse(esc == 0, esc_levels[1],
+              ifelse(esc <= 8, esc_levels[2],
+                     ifelse(esc <= 12, esc_levels[3], esc_levels[4])))),
+  levels = esc_levels
+)
+
+casen$sexo_cat <- factor(
+  ifelse(casen$sexo == 2, sexo_levels[1],
+         ifelse(casen$sexo == 1, sexo_levels[2], NA)),
+  levels = sexo_levels
+)
+
+```
+
+### 2.1.3 Conexión a base de datos PostgreSQL
+
+En esta etapa se establece la conexión con la base de dato de PostgreSQL la cual contiene la información de los datos del censo, ademas de la información espacial. Esto permitió consultar la información directamente desde la conexión y usarla en el análisis geográfico sin tener que exportar los archivos.
+
+```{r Conexión con PostgreSQL, echo=TRUE, message=FALSE, warning=FALSE}
+con <- dbConnect(
+  Postgres(),
+  dbname   = "censo_rm_2017",
+  host     = "localhost",
+  port     = 5433,
+  user     = "postgres",
+  password = "postgres"
+)
+```
+
+### 2.1.4 Consulta de variable censal
+
+Mediante una consulta SQL se obtuvo información sobre cuántas personas viven en cada zona censal. Para eso se combinaron los datos de viviendas, zonas censales y comunas, lo que permitió calcular indicadores como el promedio de habitantes por hogar. Finalmente, los resultados se guardaron como un objeto espacial (`sf`) para mantener la forma y ubicación de cada zona en el mapa.
+
+```{r Consulta SQL, echo=TRUE, message=FALSE, warning=FALSE}
+sql_censo <- "
+WITH agg AS (
+  SELECT z.geocodigo::text AS geocodigo, c.nom_comuna,
+    ROUND(AVG(v.cant_per), 2) AS cant_per
+  FROM public.viviendas AS v
+  JOIN public.zonas AS z ON v.zonaloc_ref_id = z.zonaloc_ref_id
+  JOIN public.comunas AS c ON z.codigo_comuna = c.codigo_comuna
+  JOIN public.provincias AS pr ON pr.provincia_ref_id = c.provincia_ref_id
+  WHERE (pr.nom_provincia = 'SANTIAGO' OR c.nom_comuna IN ('PUENTE ALTO', 'SAN BERNARDO'))
+  GROUP BY z.geocodigo, c.nom_comuna
+)
+SELECT a.geocodigo, a.nom_comuna, a.cant_per, shp.geom
+FROM agg AS a
+JOIN dpa.zonas_censales_rm AS shp 
+ON shp.geocodigo::text = a.geocodigo
+WHERE shp.urbano = 1;
+"
+
+censo_sf <- st_read(con, query = sql_censo)
+```
+
+### 2.1.5 Consulta de variables simuladas
+
+En esta parte se llevó a cabo la microsimulación usando los datos ya limpiados de la Encuesta Casen y la información del censo como referencia. El modelo asignó personas simuladas a cada zona censal de forma probabilística, respetando la distribución real de la población.
+
+Luego, con esa población simulada, se calcularon indicadores como el porcentaje estimado de personas afiliadas a Fonasa o Isapre y la mediana del ingreso por zona. Estos resultados serán usados en las siguientes etapas del análisis y clasificación.
+
+```{r variables_simuladas, echo=TRUE, message=FALSE, warning=FALSE}
+# Microsimulación
+cons_censo_df$COMUNA <- substr(as.character(cons_censo_df$COMUNA), 1, 5)
+casen$Comuna <- substr(as.character(casen$Comuna), 1, 5)
+
+cons_censo_comunas <- split(cons_censo_df, cons_censo_df$COMUNA)
+inds_list <- split(casen, casen$Comuna)
+
+sim_list <- lapply(names(cons_censo_comunas), function(zona) {
+  cons_i <- cons_censo_comunas[[zona]]
+  tmp    <- inds_list[[zona]]
+  if (is.null(tmp) || nrow(tmp) == 0) return(NULL)
+  
+  col_order <- sort(setdiff(names(cons_i), c("COMUNA","GEOCODIGO")))
+  cons_i    <- cons_i[, c("GEOCODIGO", col_order), drop = FALSE]
+  
+  inds_i <- tmp[, c("ID","edad_cat","esc_cat","sexo_cat"), drop = FALSE]
+  names(inds_i) <- c("ID","Edad","Escolaridad","Sexo")
+  
+  w_frac <- weight(cons = cons_i, inds = inds_i, vars = c("Edad","Escolaridad","Sexo"))
+  sim_i  <- integerise(weights = w_frac, inds = inds_i, seed = 123)
+  
+  merge(sim_i, tmp[, c("ID", "s13", "ypc")], by = "ID", all.x = TRUE)
+})
+
+sim_df <- data.table::rbindlist(sim_list, idcol = "COMUNA")
+
+# AGREGAR VARIABLES A NIVEL ZONA
+sim_df$fonasa <- ifelse(sim_df$s13 == 1, 1, 0)
+sim_df$isapre <- ifelse(sim_df$s13 == 2, 1, 0)
+
+# Ingreso microsimulado por zona
+zonas_ingreso <- aggregate(ypc ~ zone, data = sim_df, FUN = median)
+names(zonas_ingreso) <- c("geocodigo", "mediana_ingreso")
+zonas_ingreso$geocodigo <- as.character(zonas_ingreso$geocodigo)
+
+# % Fonasa / Isapre por zona
+salud_promedio <- sim_df %>%
+  group_by(zone) %>%
+  summarise(
+    ptje_fonasa = 100 * mean(fonasa, na.rm = TRUE),
+    ptje_isapre = 100 * mean(isapre, na.rm = TRUE)
+  ) %>%
+  rename(geocodigo = zone)
+```
+
+### 2.1.6 Unión de datos y aplicación del clustering
+
+En esta etapa se integraron los indicadores obtenidos del censo y de la microsimulación en una base consolidada a nivel de zona censal. Luego, se seleccionaron las variables relevantes y se aplicó una normalización para asegurarlas en la misma escala y permitir su comparación adecuada. Posteriormente, se utilizó el `método k-means` para realizar la agrupación (`clustering`). Para determinar el número óptimo de grupos, se aplicó el método del codo, concluyendo que tres clusters eran suficientes, ya que aumentar la cantidad no aportaba información adicional relevante ni mejoraba la interpretación de los patrones. El resultado de este proceso permitió clasificar las zonas censales según sus características socioeconómicas y sus patrones de afiliación al sistema de salud (Fonasa e Isapre).
+
+```{r Unión de datos, echo=TRUE, message=FALSE, warning=FALSE}
+zonas_cluster <- censo_sf %>%
+  left_join(salud_promedio, by = "geocodigo") %>%
+  left_join(zonas_ingreso,   by = "geocodigo")
+
+datos_cluster <- zonas_cluster %>%
+  st_drop_geometry() %>%
+  select(ptje_fonasa, ptje_isapre, cant_per, mediana_ingreso) %>%
+  na.omit() %>%
+  scale()
+
+fviz_nbclust(datos_cluster, kmeans, method = "wss")
+
+set.seed(123)
+modelo <- kmeans(datos_cluster, centers = 3, nstart = 30)
+
+zonas_cluster$cluster <- as.factor(modelo$cluster)
+```
+
+### 2.1.7 Carga de zonas censales
+
+Para finalizar, la base con los resultados del clustering se volvió a unir con la geometría de las zonas censales. Con esto, los grupos obtenidos pueden visualizarse en mapas y utilizarse en análisis espaciales y representaciones cartográficas posteriores.
+
+```{r include=TRUE}
+zn <- zonas_cluster
+```
+
+# 2.2 Análisis y resultados
+
+### 2.2.1 Gráfico de dispersión
+
+Para el caso de `Isapre` se observa una tendencia `positiva`: a medida que aumenta el ingreso, el cluster 2 se vuelve más consistente y concentrado, representando a la población con mayores ingresos, quienes mayoritariamente eligen estar afiliados a este sistema de salud. Esto sugiere que existe una relación directa entre capacidad económica y acceso o preferencia por servicios de salud privados, ya sea por percepción de calidad, tiempos de atención o mayor oferta de prestaciones.
+
+En contraste, en `Fonasa` la tendencia es `inversa`. Los clusters 1 y 3, asociados a niveles de ingreso medio o bajo, muestran una mayor concentración en el sistema público. Esto refleja que, para estos grupos, Fonasa continúa siendo la principal vía de acceso a la atención sanitaria, ya sea por limitaciones económicas, falta de cobertura laboral o por la estructura del sistema de salud en Chile, donde Fonasa actúa como el proveedor predominante para los segmentos vulnerables. En conjunto, estos patrones permiten visualizar con claridad cómo el nivel de ingreso influye en la elección (o posibilidad de elección) del sistema de salud. En términos simples: a mayores ingresos, mayor probabilidad de pertenecer a Isapre; a menores ingresos, mayor presencia en Fonasa, este comportamiento no solo refleja desigualdades estructurales, sino que también sirve como base para identificar territorios con distintos perfiles socioeconómicos y sus necesidades sanitarias diferenciadas.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+vars_cluster1 <- c("mediana_ingreso", "ptje_fonasa", "ptje_isapre", "cluster")
+
+df_cluster <- zonas_cluster %>%
+  st_drop_geometry() %>%
+  select(all_of(vars_cluster1)) %>%
+  na.omit()
+
+df_long <- df_cluster %>%
+  pivot_longer(cols = c(ptje_fonasa, ptje_isapre),
+               names_to = "tipo_salud",
+               values_to = "porcentaje")
+
+df_long$tipo_salud <- factor(df_long$tipo_salud,
+                             levels = c("ptje_fonasa", "ptje_isapre"),
+                             labels = c("% Fonasa", "% Isapre"))
+
+plot_disp <- ggplot(df_long, aes(x = mediana_ingreso, y = porcentaje, color = cluster)) +
+  geom_point(size = 3, alpha = 0.7) +
+  scale_color_brewer(palette = "Set2") +
+  facet_wrap(~ tipo_salud, ncol = 2, scales = "free_y") +
+  labs(
+    title = "Relación entre ingreso medio y sistema de salud",
+    subtitle = "Comparación visual entre zonas con % Fonasa e % Isapre",
+    x = "Ingreso medio",
+    y = "Porcentaje",
+    color = "Cluster"
+  ) +
+  theme_minimal(base_size = 13)
+plot_disp
+```
+
+### 2.2.2 Matriz de correlación
+
+Este resultado es relevante porque permite observar la relación directa entre las variables analizadas. En el caso de Isapre, se confirma una correlación positiva con el ingreso, lo que indica que a medida que los ingresos aumentan, también lo hace la proporción de personas afiliadas al sistema privado. Por el contrario, Fonasa presenta una relación negativa con el ingreso, evidenciando que las personas con ingresos bajos y medios tienden mayoritariamente a pertenecer al sistema público.
+
+Además, Fonasa muestra una relación positiva con el tamaño del hogar, lo que sugiere que los hogares con más integrantes presentan una mayor probabilidad de estar afiliados a este sistema. En sentido inverso, el tamaño del hogar mantiene una correlación negativa tanto con el ingreso como con la afiliación a Isapre, lo que implica que los hogares más numerosos tienden a tener ingresos más bajos y menor presencia del sistema privado. En conjunto, estos patrones refuerzan las tendencias observadas previamente, mostrando que el nivel de ingresos y la composición del hogar influyen directamente en la elección del sistema de salud en la población analizada.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+vars_cluster <- c("mediana_ingreso", "ptje_fonasa", "ptje_isapre", "cant_per")
+
+df_cluster <- zonas_cluster %>%
+  st_drop_geometry() %>%
+  select(all_of(vars_cluster)) %>%
+  na.omit()
+
+
+df_cluster <- df_cluster %>%
+  rename(
+    "Ingreso medio" = mediana_ingreso,
+    "% Fonasa" = ptje_fonasa,
+    "% Isapre" = ptje_isapre,
+    "Tamaño del hogar" = cant_per
+  )
+
+
+cor_matrix <- cor(df_cluster)
+
+
+corrplot(
+  cor_matrix, 
+  method = "color",
+  col = RColorBrewer::brewer.pal(8, "PuOr"),  
+  addCoef.col = "black", 
+  tl.col = "black",
+  tl.srt = 35,            
+  number.cex = 0.9,       
+  mar = c(0, 0, 1, 0)     
+)      
+```
+
+### 2.2.3 Mapa de clusters
+
+La agrupación basada en las variables de ingreso, sistema de salud y tamaño del hogar permitió identificar patrones territoriales definidos. A partir de los resultados del clustering, se observa una tendencia marcada en el Gran Santiago, donde gran parte de las zonas censales ubicadas en el centro y la periferia corresponden principalmente a los clusters 1 y 3. Estas áreas concentran tanto hogares muy numerosos como hogares pequeños, con menores niveles de ingreso y una alta proporción de afiliados a Fonasa. Esta distribución sugiere una coexistencia de distintas realidades socioeconómicas dentro de estos sectores, pero con un patrón común asociado a mayor vulnerabilidad y dependencia del sistema público de salud.
+
+En contraste, el sector oriente de Santiago presenta una mayor homogeneidad, predominando el cluster 2, caracterizado por ingresos más altos, hogares de tamaño intermedio y una mayor proporción de afiliación a Isapre. Este patrón coincide con las dinámicas históricas de segregación socioespacial en la ciudad, donde los indicadores económicos y sociales presentan niveles más favorables. La única excepción parcial dentro de este comportamiento es Lo Barnechea, que muestra una estructura más heterogénea en comparación con otras comunas del sector oriente. Esta variación será analizada en mayor detalle mediante el Índice de Shannon, ya que su composición interna sugiere dinámicas territoriales más complejas que no se ajustan completamente al patrón predominante en el resto del eje oriente.
+
+```{r Calculo Previo para que funcione el markdown, echo=FALSE, message=FALSE, warning=FALSE}
+tabla_shannon <- zonas_cluster %>%
+  st_drop_geometry() %>%
+  group_by(nom_comuna, cluster) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  group_by(nom_comuna) %>%
+  summarise(H = diversity(n, index = "shannon"))
+
+comunas_geom <- zonas_cluster %>%
+  select(nom_comuna, geom) %>%
+  group_by(nom_comuna) %>%
+  summarise(geometry = st_union(geom), .groups = "drop") %>%
+  st_as_sf()
+
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot() +
+  geom_sf(data = zonas_cluster, aes(fill = as.factor(cluster)), color = NA) +
+  geom_sf(data = comunas_geom, fill = NA, color = "grey30", size = 0.35) +
+  geom_sf_text(data = comunas_geom, aes(label = nom_comuna), 
+               size = 2, color = "black", check_overlap = TRUE) +
+  scale_fill_brewer(palette = "Set3", name = "Cluster") +
+  labs(
+    title = "Distribución de Clusters en el Gran Santiago",
+    subtitle = "Microsimulación Casen + Censo (Ingreso, Sistema de Salud y Tamaño del Hogar)",
+    caption = "Elaboración propia"
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(size = 15, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 11, hjust = 0.5),
+    legend.position = "right"
+  )
+```
+
+En la siguiente tabla se observa la información base de la población segmentada por clusters, incluyendo los ingresos medios y el porcentaje afiliado a cada sistema de salud. Esta visualización permite identificar una relación evidente entre el nivel de ingresos y la elección del sistema previsional, ya sea público o privado. Los resultados muestran una tendencia clara: a mayor ingreso, existe una mayor preferencia por el sistema privado (Isapre), lo cual también coincide con hogares de menor tamaño. En contraste, los grupos con ingresos más bajos `independiente de si el tamaño del hogar es grande o pequeño` presentan mayor presencia en el sistema público (Fonasa). Este comportamiento puede estar asociado a barreras financieras de acceso al sistema privado, lo que hace que Fonasa sea la opción predominante en estos segmentos, los datos reflejan cómo las condiciones económicas influyen directamente en la elección del sistema de salud, destacando diferencias estructurales dentro de la población según nivel socioeconómico y características del hogar.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+tabla_cluster <- zonas_cluster %>%
+  st_drop_geometry() %>%
+  group_by(cluster) %>%
+  summarise(
+    ingreso = round(mean(mediana_ingreso, na.rm = TRUE), 0),
+    fonasa  = paste0(round(mean(ptje_fonasa, na.rm = TRUE), 2), "%"),
+    isapre  = paste0(round(mean(ptje_isapre, na.rm = TRUE), 2), "%"),
+    hogar   = round(mean(cant_per,      na.rm = TRUE), 2),
+    n = n()
+  )
+
+kable(tabla_cluster, caption = "Resumen descriptivo por cluster")
+```
+
+La interpretación de los cluster se ve expresado de la siguiente manera:
+
+| Cluster | Ingreso | Fonasa | Isapre | Hogar | Perfil socioespacial |
+|-----------|-----------|-----------|-----------|-----------|--------------------|
+| **1** | Bajo - medio | Alto | Bajo | Pequeño - intermedio | Dependencia mayoritaria del sistema público; territorios vulnerables o envejecidos |
+| **2** | Alto | Bajo | Alto | Medio | Sectores acomodados, predominio del aseguramiento privado |
+| **3** | Medio | Mixto | Mixto | Alto | Clase media tradicional, con mayor presencia de familias numerosas |
+
+### 2.2.4 Índice de Shannon
+
+El Índice de Shannon permitió evaluar la diversidad de clusters presentes en cada zona censal, con valores entre 0 y 1, donde cifras cercanas a 1 indican mayor mezcla entre clusters, mientras que valores cercanos a 0 reflejan predominio de un único grupo. Este indicador, disponible en la `librería vegan` de R `(función diversity())`, es útil para analizar heterogeneidad territorial.
+
+Los resultados muestran que en el sector oriente los valores del índice son bajos, lo que evidencia una estructura homogénea y fuertemente asociada al cluster 2, caracterizado por mayores ingresos y mayor afiliación a Isapre. La excepción es Lo Barnechea, donde el índice presenta una mayor diversidad debido a contrastes internos, especialmente asociados al sector conocido como Cerro 18, donde coexisten clusters de menores ingresos (1 y 3) junto a zonas de altos ingresos (cluster 2).
+
+En el resto del Gran Santiago se observan valores más altos del índice, lo que refleja una mayor diversidad social y territorial. Este comportamiento es esperable en zonas centrales y periféricas donde conviven distintos niveles de ingreso, tamaños de hogar y tipos de afiliación al sistema de salud. Sin embargo, algunas comunas como Renca, Quilicura, Pudahuel, entre otras, presentan menor diversidad interna al estar dominadas principalmente por clusters de menores ingresos con alta dependencia del sistema público de salud (Mac-Clure & Calvo, 2013).
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+shannon_comuna <- left_join(comunas_geom, tabla_shannon, by = "nom_comuna")
+
+ggplot(shannon_comuna) +
+  geom_sf(aes(fill = H), color = "grey30", size = 0.1) +
+  geom_sf(data = comunas_geom, fill = NA, color = "grey30", size = 0.35) +
+  geom_sf_text(data = comunas_geom, aes(label = nom_comuna), 
+               size = 2, color = "black", check_overlap = TRUE) +
+  scale_fill_viridis_c(option = "inferno", direction = -1) +
+  labs(
+    title = "Índice de Shannon - Variabilidad Intra Comunal",
+    subtitle = "Diversidad de clusters según las variables",
+    caption = "Elaboración propia",
+    fill = "Shannon H"
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 12),
+    plot.subtitle = element_text(hjust = 0.5)
+  )
+```
+
+# 3. Conclusiones
+
+El análisis permitió identificar patrones en el territorio los cuales son consistente entre afiliación previsional, ingreso estimado y la cantidad de individuos por hogar, donde se logra visualizar en los resultados una segmentación de desigualdades sociales en el territorio el cual se encuentra bien marcado, especificamente dado que las zonas pertenecientes al sector oriente concentran ingresos más altos y una mayor proporción de afiliados al sistema privado (ISAPRE), mientras que en la zona centro y la periferia del Gran Santiago presentan ingresos más bajos, mayor tamaño promedio del hogar y predomimancia de afiliados a FONASA, esta información refuerza lo descrito en los textos sobre desigualdad territorial en la salud de Chile (Mac-Clure & Calvo, 2013).
+
+El análisis de clustering permitió identificar tres grupos claramente diferenciados, lo que demuestra que la microsimulación y el uso de variables sociodemográficas son herramientas útiles para detectar patrones territoriales, incluso con datos agregados. Ádemas, la matriz de correlación mostró relaciones fuertes entre ingreso y el tipo de Sistema de previción de salud, lo que respalda estadísticamente los patrones observados en las visualizaciones.
+
+La distribución espacial resultante de los clusters es coherente con lo observado en el Trabajo 2, mostrando que los patrones de desigualdades sociales en el territorio se mantienen. Sin embargo, este análisis va un paso más allá dado que al considerar varias variables a la vez, esta permitiendo que se logre identificar cada zona según las distintas características de la población que vive ahí, que son más complejos en lugar de solo observar las relaciones entre dos variables. En la práctica, conocer la ubicación de estos grupos puede resultar útil para la generación de políticas públicas, enfocar recursos en servicios de salud, Construir infraestructura o priorizar intervenciones sociales según las necesidades específicas de cada territorio. Sin embargo, el estudio tiene algunas limitaciones propias de la microsimulación, como depender de la calidad de los datos de la encuesta (CASEN), genera posibles sesgos dado que no todas las personas respondieron la encuesta, y eso puede hacer que los datos no reflejen exactamente la realidad y el uso de solo tres variables para la agrupación. En investigaciones futuras, sería útil incluir otras variables como características laborales, acceso a servicios, movilidad o equipamientos urbanos, también seria útil revisar información temporal, para verificar si los patrones que se detectan se mantienen a lo largo del tiempo.
+
+Finalmente, a modo resumen en el desarrollo del trabajo se mostro que la combinación de microsimulación, análisis espacial y clustering es una herramienta valiosa para apoyar la planificación territorial en salud y urbanismo, sobre todo en situaciones donde no se dispone de datos desagregados de manera directa.
+
+# 4. Bibliografía
+
+1.  Mac-Clure, Ó., & Calvo, R. (2013). Desigualdades sociales y tipos de territorios en Chile. Polis: Revista Latinoamericana, 12(34), 467-490. <https://doi.org/10.4067/S0718-65682013000100023>.
+2.  Superintendencia de Salud. (s. f.). ¿FONASA o ISAPRE? Gobierno de Chile. Recuperado de <https://www.superdesalud.gob.cl/orientacion-en-salud/fonasa-o-isapre/>.
+3.  Biblioteca del Congreso Nacional de Chile (BCN). (2018). Sistema de Salud en Chile. Recuperado de <https://www.bcn.cl/obtienearchivo?id=repositorio%2F10221%2F27987%2F1%2FIA_10_2018_Sistemas_Salud_Chile_FINAL.pdf>.
+4.  Crespo, R., Álvarez, C., Hernández, I., & García, C. (2020). A spatially explicit analysis of chronic diseases in small areas: A case study of diabetes in Santiago, Chile. International Journal of Health Geographics, 19, 24. <https://doi.org/10.1186/s12942-020-00217-1>.
+5.  Ministerio de Desarrollo Social y Familia. (2022). Resultados CASEN 2022 – Salud. Recuperado de <https://observatorio.ministeriodesarrollosocial.gob.cl/storage/docs/casen/2022/Resultados_Salud_Casen2022.pdf>.
+6.  Jones, P. M. (2017). rakeR: Easy Spatial Microsimulation (Raking) in R. Retrieved from <https://philmikejones.github.io/rakeR/>
+7.  Oksanen, J. et al. (2024). vegan: Community Ecology Package — función diversity(). Recuperado de <https://search.r-project.org/CRAN/refmans/vegan/html/diversity.html>
