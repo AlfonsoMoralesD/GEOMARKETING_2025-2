@@ -47,3 +47,8 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Se ignora archivos pesados
+
+/Data/datos_epf/EPF/base-gastos-ix-epf-stata.dta
+/Data/datos_epf/EPF/base-cantidades-ix-epf-stata.dta
