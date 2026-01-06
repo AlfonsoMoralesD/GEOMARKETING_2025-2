@@ -1,0 +1,3990 @@
+{
+  "type": "FeatureCollection",
+  "generator": "overpass-turbo",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "timestamp": "2026-01-05T19:50:45Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/50773905",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "5278",
+        "addr:street": "Beethoven",
+        "amenity": "school",
+        "contact:email": "directorcpsm@gmail.com",
+        "name": "Colegio Santa Marta",
+        "operator": "3",
+        "school:type": "10;110;310",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5762185,
+          -33.4386711
+        ]
+      },
+      "id": "way/50773905"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/51247566",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "185",
+        "addr:street": "Francisco de Villagra",
+        "amenity": "school",
+        "contact:email": "escsiria191@hotmail.com",
+        "name": "Liceo República de Siria",
+        "old_name": "D-191",
+        "operator": "1",
+        "school:type": "10;110;310",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5750398,
+          -33.4557509
+        ]
+      },
+      "id": "way/51247566"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/54928730",
+        "addr:housenumber": "260,282",
+        "addr:street": "Exequiel Fernández",
+        "amenity": "school",
+        "building": "school",
+        "building:levels": "2",
+        "contact:email": "liceocomercialnunoa@gmail.com",
+        "name": "Liceo Comercial Ñuñoa",
+        "operator": "3",
+        "school:type": "410",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5994532,
+          -33.4570674
+        ]
+      },
+      "id": "way/54928730"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/157652029",
+        "addr:housenumber": "4950",
+        "addr:street": "Dublé Almeyda",
+        "amenity": "school",
+        "name": "Colegio San Agustín",
+        "old_name": "Liceo San Agustín",
+        "source": "www.liceosanagustin.cl",
+        "wikidata": "Q2895366",
+        "wikipedia": "es:Colegio San Agustín (Santiago de Chile)",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5778141,
+          -33.4583323
+        ]
+      },
+      "id": "way/157652029"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/163158775",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "476",
+        "addr:street": "Exequiel Fernandez",
+        "amenity": "kindergarten",
+        "name": "Jardín Infantil Mi Infancia",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5997791,
+          -33.4592648
+        ]
+      },
+      "id": "way/163158775"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/185142713",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "950",
+        "addr:street": "Avenida Irarrázaval",
+        "amenity": "school",
+        "building": "school",
+        "building:levels": "2",
+        "name": "Escuela Básica N°823 Spendix",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6210631,
+          -33.4533334
+        ]
+      },
+      "id": "way/185142713"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/188157644",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "5310",
+        "addr:street": "Avenida Irarrázaval",
+        "alt_name": "Colegio Santo Tomás",
+        "amenity": "school",
+        "contact:phone": "+56226059016",
+        "name": "Colegio Manquecura Ñuñoa",
+        "school:type": "10;110;310",
+        "website": "https://www.manquecuranunoa.cl/colegio/nunoa/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5753505,
+          -33.4524885
+        ]
+      },
+      "id": "way/188157644"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/203812056",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "661",
+        "addr:street": "Montenegro",
+        "amenity": "school",
+        "contact:email": "ccalasanz@escolapios.cl",
+        "name": "Colegio Calasanz",
+        "operator": "4",
+        "school:type": "10;110;310",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5843802,
+          -33.4495114
+        ]
+      },
+      "id": "way/203812056"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/238748376",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "2577",
+        "addr:street": "Suárez Mujica",
+        "amenity": "school",
+        "name": "Colegio Saint Gaspar College",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6048816,
+          -33.4606837
+        ]
+      },
+      "id": "way/238748376"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/251066489",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "105",
+        "addr:street": "Brown Norte",
+        "amenity": "school",
+        "barrier": "wall",
+        "contact:email": "lms@uchile.cl",
+        "name": "Liceo Experimental Manuel de Salas",
+        "operator": "4",
+        "school:type": "10;110;310",
+        "short_name": "LMS",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "wikidata": "Q5975076",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5907386,
+          -33.4543069
+        ]
+      },
+      "id": "way/251066489"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/251083221",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "3493",
+        "addr:street": "Dublé Almeyda",
+        "amenity": "school",
+        "contact:email": "ivalenzuelap@hotmail.com",
+        "name": "Escuela Básica José Toribio Medina",
+        "old_name": "Escuela Superior de Hombres Nº 48 República de El Salvador",
+        "operator": "1",
+        "religion": "none",
+        "school:type": "10;110",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.594186,
+          -33.4571969
+        ]
+      },
+      "id": "way/251083221"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/251083225",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "123",
+        "addr:street": "Humberto Trucco",
+        "amenity": "school",
+        "contact:email": "crica184cmds@hotmail.com",
+        "grades": "1-8",
+        "name": "Colegio República de Costa Rica",
+        "operator": "1",
+        "operator:type": "government_facility-public",
+        "religion": "none",
+        "school:type": "10;110",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.59466,
+          -33.4565421
+        ]
+      },
+      "id": "way/251083225"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/272715950",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1670",
+        "addr:street": "Avenida Marathon Oriente",
+        "amenity": "kindergarten",
+        "name": "Jardín Infantil Sol Naciente",
+        "old_name": "Escuela Especial San Nectario",
+        "operator": "Fundación Integra",
+        "operator:type": "public",
+        "preschool": "yes",
+        "school:type": "214",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.612954,
+          -33.4702005
+        ]
+      },
+      "id": "way/272715950"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/283665463",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "273",
+        "addr:street": "Juan Enrique Concha",
+        "amenity": "school",
+        "contact:email": "ism.secre@vtr.net",
+        "name": "Colegio Instituto Santa María",
+        "operator": "4",
+        "school:type": "10;110;310",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5965355,
+          -33.4576098
+        ]
+      },
+      "id": "way/283665463"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/283681102",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "295,321",
+        "addr:street": "Avenida José Pedro Alessandri",
+        "amenity": "school",
+        "contact:email": "heinrich@gmail.com",
+        "name": "Comercial Guillermo González Heinrich N°2",
+        "operator": "3",
+        "school:type": "410",
+        "source": "Reconocimiento cortográfico de campo 2016 por KG",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5983864,
+          -33.4576089
+        ]
+      },
+      "id": "way/283681102"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/298694352",
+        "addr:street": "Pedro Torres",
+        "amenity": "kindergarten",
+        "building": "yes",
+        "check_date": "2025-08-16",
+        "name": "Kinder",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5898749,
+          -33.4542955
+        ]
+      },
+      "id": "way/298694352"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/312642663",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "39",
+        "addr:postcode": "7750030",
+        "addr:street": "Carmen Covarrubias",
+        "alt_name": "Liceo 7 Jose Toribio Medina",
+        "amenity": "school",
+        "name": "Liceo José Toribio Medina",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6117591,
+          -33.4539094
+        ]
+      },
+      "id": "way/312642663"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/349890423",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "781",
+        "addr:street": "Regina Pacis",
+        "amenity": "school",
+        "email": "info@theangels.cl",
+        "layer": "1",
+        "name": "The Angel's School",
+        "source": "Reconocimiento cartográfico 2016 por KG.",
+        "start_date": "1983",
+        "website": "https://theangels.cl/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5944797,
+          -33.4480667
+        ]
+      },
+      "id": "way/349890423"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/445857960",
+        "addr:street": "Avenida Simón Bolívar",
+        "amenity": "childcare",
+        "building": "yes",
+        "name": "Dragonfly",
+        "source": "Reconocimiento cortográfico de campo 2016 por KG",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6007225,
+          -33.449477
+        ]
+      },
+      "id": "way/445857960"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/446593194",
+        "addr:city": "Ñuñoa",
+        "addr:street": "Avenida Grecia",
+        "amenity": "childcare",
+        "name": "Jardín Infantil Micifuz",
+        "opening_hours": "7:00-19:30",
+        "phone": "2769 6187",
+        "source": "KG Ground Survey 2016",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5868095,
+          -33.4653829
+        ]
+      },
+      "id": "way/446593194"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/446920518",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1433",
+        "addr:street": "Exequiel Fernández",
+        "amenity": "school",
+        "name": "Colegio República de Francia",
+        "source": "Reconocimiento cortográfico de campo 2016 por KG",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6009605,
+          -33.4679848
+        ]
+      },
+      "id": "way/446920518"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/446922271",
+        "amenity": "school",
+        "source": "Reconocimiento cortográfico de campo 2016 por KG",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6041819,
+          -33.4699597
+        ]
+      },
+      "id": "way/446922271"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/446923970",
+        "addr:city": "Macul",
+        "addr:housenumber": "1358",
+        "addr:street": "Exequiel Fernández",
+        "amenity": "school",
+        "name": "Jardín Infantil Las Ardillitas",
+        "source": "Reconocimiento cortográfico de campo 2016 por KG",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6001933,
+          -33.4670835
+        ]
+      },
+      "id": "way/446923970"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/447039611",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "400",
+        "addr:street": "Doctor Johow",
+        "amenity": "school",
+        "contact:email": "instpabloneruda@hotmail.com",
+        "grades": "0-12",
+        "name": "Instituto Pablo Neruda",
+        "operator": "4",
+        "school:type": "110;310",
+        "source": "Reconocimiento cortográfico de campo 2016 por KG",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.593623,
+          -33.4594754
+        ]
+      },
+      "id": "way/447039611"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/447095848",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "402",
+        "addr:street": "Los Tres Antonios",
+        "amenity": "school",
+        "denomination": "waldorf",
+        "name": "Colegio Waldorf de Santiago",
+        "religion": "christian",
+        "source": "Reconocimiento cortográfico de campo 2016 por KG",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6029495,
+          -33.4587052
+        ]
+      },
+      "id": "way/447095848"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/447099073",
+        "addr:city": "Ñuñoa",
+        "addr:street": "Exequiel Fernández",
+        "amenity": "school",
+        "check_date": "2024-06-04",
+        "name": "Colegio Francisco Encina",
+        "source": "Reconocimiento cortográfico de campo 2016 por KG",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6004458,
+          -33.4637602
+        ]
+      },
+      "id": "way/447099073"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/447105003",
+        "addr:housenumber": "95",
+        "addr:street": "Alcalde Jorge Monckeberg",
+        "amenity": "school",
+        "contact:email": "colegio.irarrazaval@gmail.com",
+        "name": "Escuela Básica Irarrázaval",
+        "operator": "4",
+        "school:type": "10;110",
+        "source": "KG Ground Survey 2016",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5838658,
+          -33.4558502
+        ]
+      },
+      "id": "way/447105003"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/447105006",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "4312",
+        "addr:street": "Alcalde Eduardo Castillo Velasco",
+        "amenity": "kindergarten",
+        "building": "yes",
+        "building:levels": "2",
+        "check_date": "2024-04-24",
+        "name": "Chamin",
+        "source": "Reconocimiento cortográfico de campo 2016 por KG",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5854042,
+          -33.4596265
+        ]
+      },
+      "id": "way/447105006"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/447105008",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "727",
+        "addr:street": "Los Jardines",
+        "amenity": "school",
+        "name": "Escuela de Lenguaje Boy Happy",
+        "source": "Reconocimiento cortográfico de campo 2016 por KG",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5897722,
+          -33.4622974
+        ]
+      },
+      "id": "way/447105008"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/447617393",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "3688",
+        "addr:street": "Avenida Presidente José Batlle y Ordóñez",
+        "amenity": "kindergarten",
+        "building": "yes",
+        "name": "Jardin Infantil Avioncitos de Papel Montessori",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.59156,
+          -33.4481818
+        ]
+      },
+      "id": "way/447617393"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/447719955",
+        "addr:city": "Ñuñoa",
+        "addr:country": "CL",
+        "addr:housenumber": "1004",
+        "addr:street": "Avenida Vicuña Mackenna",
+        "amenity": "school",
+        "contact:email": "martinelli@ctpra.cl",
+        "contact:phone": "+56 2 2224164",
+        "name": "Colegio Técnico Profesional República Argentina",
+        "operator": "1",
+        "school:type": "110;410;510;610",
+        "source": "Reconocimiento cortográfico de campo 2016 por KG",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6295285,
+          -33.4543689
+        ]
+      },
+      "id": "way/447719955"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/450816548",
+        "addr:city": "ÑUÑOA",
+        "addr:housenumber": "137",
+        "addr:street": "Montenegro",
+        "amenity": "kindergarten",
+        "building": "yes",
+        "building:levels": "1",
+        "name": "Pasitos",
+        "roof:levels": "0",
+        "roof:shape": "flat",
+        "source": "Reconocimiento cartográfico por KG 2016",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5853834,
+          -33.4537518
+        ]
+      },
+      "id": "way/450816548"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/450891581",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "840",
+        "addr:street": "Avenida Ossa",
+        "amenity": "school",
+        "contact:email": "direccion@colegiovitoquino.cl",
+        "name": "Colegio Víctor Domingo Silva",
+        "operator": "4",
+        "school:type": "10;110;310",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5727342,
+          -33.445423
+        ]
+      },
+      "id": "way/450891581"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/454156494",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "589",
+        "addr:street": "Ramón Cruz Montt",
+        "amenity": "school",
+        "grades": "7-12",
+        "name": "Liceo Augusto D'Halmar",
+        "operator": "1",
+        "operator:type": "public",
+        "school:type": "110;310",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5813282,
+          -33.460185
+        ]
+      },
+      "id": "way/454156494"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/493041138",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1191",
+        "addr:street": "Rosita Renard",
+        "amenity": "school",
+        "name": "Escuela Especial Municipal Hellen Keller",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5742498,
+          -33.4434369
+        ]
+      },
+      "id": "way/493041138"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/574896670",
+        "amenity": "school",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.57909,
+          -33.469875
+        ]
+      },
+      "id": "way/574896670"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/574896671",
+        "amenity": "school",
+        "name": "Colegio Nº 2 de Ñuñoa",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5789482,
+          -33.4693043
+        ]
+      },
+      "id": "way/574896671"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/574897328",
+        "addr:housenumber": "4017",
+        "addr:street": "Olmue A",
+        "amenity": "school",
+        "contact:email": "colegiojuanmoya@hotmail.com",
+        "name": "Escuela Básica Juan Moya Morales",
+        "operator": "1",
+        "school:type": "10;110",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5905857,
+          -33.4681571
+        ]
+      },
+      "id": "way/574897328"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/574900892",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1372",
+        "addr:street": "Avenida José Pedro Alessandri",
+        "amenity": "school",
+        "check_date": "2024-06-04",
+        "name": "Colegio San Juan Bautista",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5977684,
+          -33.4676127
+        ]
+      },
+      "id": "way/574900892"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/584062402",
+        "addr:housenumber": "60",
+        "addr:street": "Pedro Torres",
+        "amenity": "school",
+        "contact:email": "ptorres@kendal.cl",
+        "name": "Colegio Kendal English School",
+        "operator": "4",
+        "school:type": "10;110",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5891567,
+          -33.4547934
+        ]
+      },
+      "id": "way/584062402"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/585467667",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "357",
+        "addr:street": "Doctor Johow",
+        "amenity": "school",
+        "contact:email": "lichan@lichan.cl",
+        "contact:phone": "+56 2 4833700",
+        "name": "Liceo Industrial Chileno Alemán",
+        "operator": "5",
+        "school:type": "510",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5947144,
+          -33.4584483
+        ]
+      },
+      "id": "way/585467667"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/585470692",
+        "amenity": "school",
+        "check_date": "2025-09-01",
+        "name": "Cepech",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5981856,
+          -33.4563718
+        ]
+      },
+      "id": "way/585470692"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/590873397",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "2147",
+        "addr:street": "Doctor Guillermo Mann",
+        "amenity": "kindergarten",
+        "name": "Isabel Riquelme",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6103145,
+          -33.4707812
+        ]
+      },
+      "id": "way/590873397"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/591295905",
+        "amenity": "school",
+        "name": "Liceo Brígida Walker",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6241758,
+          -33.4618169
+        ]
+      },
+      "id": "way/591295905"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/597943048",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1740",
+        "addr:street": "Brown Sur",
+        "amenity": "kindergarten",
+        "name": "Jardín Infantil Lican Ray",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5945905,
+          -33.4719641
+        ]
+      },
+      "id": "way/597943048"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/606508328",
+        "amenity": "school",
+        "name": "Colegio Aurora de Chile",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6014973,
+          -33.4458265
+        ]
+      },
+      "id": "way/606508328"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/607080507",
+        "addr:housenumber": "1764",
+        "addr:street": "Juan Moya",
+        "amenity": "school",
+        "name": "Colegio Nº 1 Ñuñoa",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5889553,
+          -33.470738
+        ]
+      },
+      "id": "way/607080507"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/612836682",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "2182",
+        "addr:street": "Avenida José Miguel Claro",
+        "amenity": "childcare",
+        "building": "yes",
+        "name": "Jardín Infantil Pimpollo",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.616222,
+          -33.4483726
+        ]
+      },
+      "id": "way/612836682"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/619446690",
+        "addr:city": "Ñuñoa",
+        "addr:street": "Coventry",
+        "amenity": "kindergarten",
+        "name": "Tierra Mía",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.580607,
+          -33.4475701
+        ]
+      },
+      "id": "way/619446690"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/624758087",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "5110",
+        "addr:street": "Salitre",
+        "amenity": "kindergarten",
+        "building": "house",
+        "name": "Jardín Infantil Don Osito",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5779055,
+          -33.4453087
+        ]
+      },
+      "id": "way/624758087"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/625181082",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "4862",
+        "addr:street": "Avenida Pedro de Valdivia",
+        "amenity": "school",
+        "name": "Liceo Carmela Silva Donoso",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6055927,
+          -33.4674215
+        ]
+      },
+      "id": "way/625181082"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/625181111",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1081",
+        "addr:street": "Vía Ocho",
+        "amenity": "school",
+        "name": "Escuela Basica Brigida Walker Anexo D-18",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6196991,
+          -33.4676347
+        ]
+      },
+      "id": "way/625181111"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/631674606",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "4650",
+        "addr:street": "Avenida Pedro de Valdivia",
+        "amenity": "school",
+        "name": "Instituto Superior de Comercio Diego Portales",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6057062,
+          -33.4659691
+        ]
+      },
+      "id": "way/631674606"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/725880128",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "3612",
+        "addr:street": "Avenida Suecia",
+        "amenity": "kindergarten",
+        "building": "commercial",
+        "name": "Vitamina - Sala Cuna y Jardín infantil Suecia",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5998909,
+          -33.4536255
+        ]
+      },
+      "id": "way/725880128"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/726584376",
+        "addr:housenumber": "352",
+        "addr:street": "Avenida José Pedro Alessandri",
+        "amenity": "school",
+        "contact:email": "ghenrich@gmail.com",
+        "name": "Centro Educacional Profesor Guillermo González Heinrich",
+        "operator": "3",
+        "school:type": "110;510",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5972484,
+          -33.4580742
+        ]
+      },
+      "id": "way/726584376"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/758178998",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1860",
+        "addr:street": "Avenida Condell",
+        "amenity": "school",
+        "email": "rosajaraquemada48@yahoo.es",
+        "name": "Escuela Básica Rosa Jaraquemada Walton",
+        "operator": "3",
+        "school:type": "10;110",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6241139,
+          -33.4518833
+        ]
+      },
+      "id": "way/758178998"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/758437646",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1696",
+        "addr:street": "Avenida Salvador",
+        "amenity": "school",
+        "email": "unisal@cus.cl",
+        "name": "Colegio Universitario El Salvador",
+        "operator": "4",
+        "school:type": "10;110;310",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6214278,
+          -33.448379
+        ]
+      },
+      "id": "way/758437646"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/828089137",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "91",
+        "addr:street": "Campos de Deportes",
+        "amenity": "school",
+        "contact:email": "colegioapostolsanpedro@yahoo.e",
+        "name": "Colegio Apostol San Pedro",
+        "operator": "4",
+        "school:type": "110;310",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6092211,
+          -33.4543654
+        ]
+      },
+      "id": "way/828089137"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/828748404",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "4000",
+        "addr:street": "Avenida Grecia",
+        "amenity": "school",
+        "name": "Colegio República de Siria",
+        "source": "Reconocimiento cortográfico de campo 2016 por KG",
+        "website": "https://www.colegiosiria.cl/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5886266,
+          -33.4647827
+        ]
+      },
+      "id": "way/828748404"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/829206461",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "2206",
+        "addr:street": "Avenida José Domingo Cañas",
+        "amenity": "school",
+        "contact:email": "info@css.cl",
+        "name": "Colegio Suizo de Santiago",
+        "name:de": "Schweizer Schule Santiago",
+        "operator": "4",
+        "school:type": "10;110;310",
+        "source": "Reconocimiento cortográfico de campo 2016 por KG",
+        "website": "https://www.css.cl/",
+        "wikidata": "Q5777187",
+        "wikipedia": "en:Colegio Suizo de Santiago",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6086159,
+          -33.456533
+        ]
+      },
+      "id": "way/829206461"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/839521079",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "369",
+        "addr:street": "Brown Norte",
+        "amenity": "school",
+        "contact:email": "liceoggv@comeduc.cl",
+        "name": "Liceo Comercial Gabriel González Videla",
+        "school:type": "410",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "website": "https://liceoggv.cl/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5910214,
+          -33.4519291
+        ]
+      },
+      "id": "way/839521079"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/860858417",
+        "addr:housenumber": "2525",
+        "addr:street": "Alcalde Eduardo Castillo Velasco",
+        "amenity": "school",
+        "check_date": "2022-08-27",
+        "email": "colegiopreciosasangre@cpsnunoa.com",
+        "name": "Colegio Preciosa Sangre – Ñuñoa",
+        "phone": "+56 2 2453 3709",
+        "school:type": "10;110;310",
+        "website": "https://cpsnunoa.cl/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6049982,
+          -33.4589737
+        ]
+      },
+      "id": "way/860858417"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906430740",
+        "addr:city": "Ñuñoa",
+        "addr:country": "CL",
+        "addr:housenumber": "207",
+        "addr:street": "Lo Encalada",
+        "amenity": "school",
+        "contact:email": "corpaliv@gmail.com",
+        "name": "Escuela Especial Jan Van Dijk",
+        "note": "Correcciones masivas a ortografía en nombres de importaciones hechas por equipo de gendarmería",
+        "operator": "3",
+        "school:type": "213",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.625424,
+          -33.454058
+        ]
+      },
+      "id": "node/906430740"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906431322",
+        "addr:city": "Ñuñoa",
+        "addr:country": "CL",
+        "addr:housenumber": "446",
+        "addr:street": "Matta Oriente",
+        "amenity": "school",
+        "contact:email": "salinas.mig@gmail.com",
+        "contact:phone": "+56 2 2090643",
+        "name": "Escuela Básica Manuel Antonio Matta",
+        "operator": "3",
+        "school:type": "110",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6255094,
+          -33.453947
+        ]
+      },
+      "id": "node/906431322"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906431828",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1101",
+        "addr:street": "Lo Encalada",
+        "amenity": "school",
+        "contact:email": "cembw@ctcinternet.cl",
+        "name": "Complejo Educacional Municipal Brigida Walker",
+        "operator": "1",
+        "school:type": "310;410;510",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.625772,
+          -33.4599084
+        ]
+      },
+      "id": "node/906431828"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906432536",
+        "addr:city": "Ñuñoa",
+        "addr:country": "CL",
+        "addr:housenumber": "950",
+        "addr:street": "Irarrazabal",
+        "amenity": "school",
+        "contact:email": "spendix_823@hotmail.com",
+        "name": "Escuela Basica Spendix",
+        "operator": "4",
+        "school:type": "110",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6209797,
+          -33.452897
+        ]
+      },
+      "id": "node/906432536"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906432600",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1761",
+        "addr:street": "Julio Prado",
+        "amenity": "school",
+        "contact:email": "cclcastanos@coanil.cl",
+        "name": "Centro de Capacitación Laboral \"Los Castaños\"",
+        "operator": "3",
+        "school:type": "212",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "wheelchair": "no"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6206983,
+          -33.4491797
+        ]
+      },
+      "id": "node/906432600"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906432673",
+        "addr:housenumber": "0239",
+        "addr:street": "Inés Palma",
+        "amenity": "school",
+        "contact:email": "smargarie@hotmail.com",
+        "name": "Colegio Santa Margarita De Escocia",
+        "operator": "3",
+        "school:type": "110;310",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6268194,
+          -33.4502671
+        ]
+      },
+      "id": "node/906432673"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906432753",
+        "addr:housenumber": "0263",
+        "addr:street": "Inés Palma",
+        "amenity": "school",
+        "contact:email": "taller@ligaepilepsia.cl",
+        "name": "Diferencial Doctor Alfonso Asenjo",
+        "operator": "3",
+        "school:type": "212",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6266094,
+          -33.4502271
+        ]
+      },
+      "id": "node/906432753"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906432823",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "755",
+        "addr:street": "Seminario",
+        "amenity": "school",
+        "contact:email": "cristian.sepulveda@yahoo.es",
+        "name": "Escuela Basica Asociacion Montessori",
+        "operator": "4",
+        "school:type": "110",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.627744,
+          -33.450661
+        ]
+      },
+      "id": "node/906432823"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434177",
+        "addr:housenumber": "1372",
+        "addr:street": "Avenida José Pedro Alessandri",
+        "amenity": "school",
+        "contact:email": "particular612@sjb.cl",
+        "contact:phone": "+56 2 2713886",
+        "name": "Colegio San Juan Bautista",
+        "operator": "3",
+        "school:type": "10;110;310",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5987322,
+          -33.4670532
+        ]
+      },
+      "id": "node/906434177"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434257",
+        "addr:housenumber": "1435",
+        "addr:street": "Exequiel Fernández",
+        "amenity": "school",
+        "contact:email": "eleonorapobletehuerta@gmal.com",
+        "name": "Escuela Básica República de Francia",
+        "operator": "1",
+        "school:type": "10;110",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6004207,
+          -33.4674367
+        ]
+      },
+      "id": "node/906434257"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434307",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "4650",
+        "addr:street": "Pedro de Valdivia",
+        "amenity": "school",
+        "contact:email": "licindt@ctcinternet.cl",
+        "contact:phone": "+56 2 2388491",
+        "name": "Liceo Politécnico Presidente Manuel Montt",
+        "operator": "5",
+        "school:type": "410;510",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6064304,
+          -33.4652697
+        ]
+      },
+      "id": "node/906434307"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434324",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "4650",
+        "addr:street": "Pedro de Valdivia",
+        "amenity": "school",
+        "contact:email": "insucodp@hotmail.com",
+        "name": "Comercial Diego Portales",
+        "operator": "5",
+        "school:type": "410",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6064304,
+          -33.4653967
+        ]
+      },
+      "id": "node/906434324"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434335",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "4650",
+        "addr:street": "Pedro de Valdivia",
+        "amenity": "school",
+        "contact:email": "coredpvaldivia@yahoo.es",
+        "name": "Liceo Politécnico Pedro de Valdivia",
+        "operator": "5",
+        "school:type": "410;610",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6064259,
+          -33.4651129
+        ]
+      },
+      "id": "node/906434335"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434364",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1081",
+        "addr:street": "Vía Ocho",
+        "amenity": "school",
+        "contact:email": "brigidawalkeranexo@yahoo.es",
+        "name": "Complejo Educacional Brigida Walker Anexo D-18",
+        "operator": "1",
+        "school:type": "10;110",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6197015,
+          -33.4674658
+        ]
+      },
+      "id": "node/906434364"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434377",
+        "addr:housenumber": "1847",
+        "addr:street": "Las Dalias",
+        "amenity": "school",
+        "name": "Colegio Psicopedagogico Juan Wesley",
+        "operator": "3",
+        "school:type": "212",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6022606,
+          -33.4713766
+        ]
+      },
+      "id": "node/906434377"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434630",
+        "addr:housenumber": "1199",
+        "addr:street": "Calle La Proa",
+        "amenity": "kindergarten",
+        "contact:email": "nuevoantumalal@gmail.com",
+        "name": "Escuela de Párvulos Nuevo Antumalal",
+        "operator": "3",
+        "school:type": "10",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5767619,
+          -33.4664167
+        ]
+      },
+      "id": "node/906434630"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434699",
+        "addr:housenumber": "36;1571",
+        "addr:street": "Pasaje",
+        "amenity": "school",
+        "contact:email": "cpnumerodosnunoa@seinpec.cl",
+        "contact:phone": "+56 2 2711104",
+        "name": "Colegio Nº 2 de Ñuñoa",
+        "operator": "3",
+        "school:type": "10;110",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5787986,
+          -33.4693513
+        ]
+      },
+      "id": "node/906434699"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434847",
+        "addr:housenumber": "37;4826",
+        "addr:street": "Pasaje V. Jaime Eyzag",
+        "amenity": "school",
+        "contact:email": "aangel@seinpec.cl",
+        "contact:phone": "+56 2 2712309",
+        "name": "Centro Politécnico de Ñuñoa",
+        "operator": "3",
+        "school:type": "410;510;610",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5791709,
+          -33.4701929
+        ]
+      },
+      "id": "node/906434847"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434877",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "670",
+        "addr:street": "Obispo Orrego",
+        "amenity": "kindergarten",
+        "contact:email": "colegiorenascence@hotmail.com",
+        "name": "Escuela De Párvulos N°1224 Renascence",
+        "operator": "4",
+        "school:type": "10",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6197397,
+          -33.4601376
+        ]
+      },
+      "id": "node/906434877"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434894",
+        "addr:housenumber": "2577",
+        "addr:street": "Suárez Mujica",
+        "amenity": "school",
+        "contact:email": "unidadesacademicas@saintgaspar",
+        "name": "Colegio Saint Gaspar College",
+        "operator": "4",
+        "school:type": "10;110;310",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6050505,
+          -33.4599669
+        ]
+      },
+      "id": "node/906434894"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434908",
+        "addr:housenumber": "2937",
+        "addr:street": "Avenida José Domingo Cañas",
+        "amenity": "kindergarten",
+        "contact:email": "cecimol@123.cl",
+        "name": "Escuela de Párvulos Saint Flower",
+        "operator": "4",
+        "school:type": "10",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6008307,
+          -33.4571569
+        ]
+      },
+      "id": "node/906434908"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434932",
+        "addr:housenumber": "2260",
+        "addr:street": "Los Pescadores",
+        "amenity": "school",
+        "contact:email": "lacanter@terra.cl",
+        "name": "Colegio La Cantera",
+        "operator": "4",
+        "school:type": "10;110;310",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6074903,
+          -33.4606368
+        ]
+      },
+      "id": "node/906434932"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434955",
+        "addr:housenumber": "670",
+        "addr:street": "Obispo Orrego",
+        "amenity": "school",
+        "contact:email": "colegiorenascence@hotmail.com",
+        "name": "Escuela Básica Renacimiento Nº 1",
+        "operator": "3",
+        "school:type": "110",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6197397,
+          -33.4600069
+        ]
+      },
+      "id": "node/906434955"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434958",
+        "addr:housenumber": "4400",
+        "addr:street": "Pedro de Valdivia",
+        "amenity": "school",
+        "contact:email": "orionista@yahoo.com",
+        "name": "Escuela Básica Carmen Arriarán",
+        "operator": "3",
+        "school:type": "10;110",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6061198,
+          -33.464032
+        ]
+      },
+      "id": "node/906434958"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434959",
+        "addr:housenumber": "2525",
+        "addr:street": "Eduardo Castillo Velasco",
+        "amenity": "school",
+        "name": "Escuela Basica Preciosa Sangre",
+        "operator": "3",
+        "school:type": "10;110",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6049105,
+          -33.4579069
+        ]
+      },
+      "id": "node/906434959"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434960",
+        "addr:city": "Ñuñoa",
+        "addr:country": "CL",
+        "addr:housenumber": "760",
+        "addr:street": "Carmen Covarrubias",
+        "amenity": "school",
+        "contact:email": "silvejar@vtr.net",
+        "name": "Escuela de Lenguaje StelLa Maris",
+        "note": "Correcciones masivas a ortografía en nombres de importaciones hechas por equipo de gendarmería",
+        "operator": "3",
+        "school:type": "214",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6119001,
+          -33.4600569
+        ]
+      },
+      "id": "node/906434960"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434970",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "701",
+        "addr:street": "Villaseca",
+        "amenity": "school",
+        "contact:email": "colilc@ctcintenet.cl",
+        "name": "Colegio Isabel La Católica",
+        "operator": "4",
+        "school:type": "10;110;310",
+        "source": "Reconocimiento cortográfico de campo 2016 por KG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6038491,
+          -33.4476058
+        ]
+      },
+      "id": "node/906434970"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434972",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "2908",
+        "addr:street": "Avenida Simón Bolívar",
+        "amenity": "school",
+        "contact:email": "colegiosantagema@hotmail.com",
+        "name": "Gimnasio Colegio Santa Gema Galgani",
+        "operator": "4",
+        "school:type": "10;110;310",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5991477,
+          -33.4486487
+        ]
+      },
+      "id": "node/906434972"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434973",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "2200",
+        "addr:street": "Avenida Simón Bolívar",
+        "amenity": "school",
+        "contact:email": "rsrmcontreras@yahoo.es",
+        "name": "Colegio Hospital De Carabineros",
+        "operator": "3",
+        "school:type": "10;110;310",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6078474,
+          -33.4504978
+        ]
+      },
+      "id": "node/906434973"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434974",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "2799",
+        "addr:street": "Avenida Suecia",
+        "amenity": "school",
+        "contact:email": "colegio.aurora@gmail.com",
+        "name": "Colegio Aurora de Chile",
+        "operator": "1",
+        "school:type": "10;110",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6008649,
+          -33.4453185
+        ]
+      },
+      "id": "node/906434974"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434975",
+        "addr:housenumber": "2821",
+        "addr:street": "Avenida Suecia",
+        "amenity": "school",
+        "contact:email": "colegioexequiel@gmail.com",
+        "name": "Escuela Especial Exequiel González",
+        "operator": "1",
+        "school:type": "212;214",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6009024,
+          -33.4452127
+        ]
+      },
+      "id": "node/906434975"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906434982",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "3020",
+        "addr:street": "Avenida Ricardo Lyon",
+        "amenity": "school",
+        "contact:email": "nmundo1331@hotmail.com",
+        "name": "Escuela Especial Nuevo Mundo",
+        "operator": "3",
+        "school:type": "212",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6021417,
+          -33.448966
+        ]
+      },
+      "id": "node/906434982"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906435000",
+        "addr:housenumber": "344",
+        "addr:street": "Brown Sur",
+        "amenity": "school",
+        "contact:email": "ceintrale@gmail.com",
+        "name": "Escuela Especial Ceintrale",
+        "operator": "3",
+        "school:type": "214",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5923211,
+          -33.4583369
+        ]
+      },
+      "id": "node/906435000"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906435002",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "3850",
+        "addr:street": "Avenida Irarrázaval",
+        "amenity": "school",
+        "contact:email": "contacto@colegioakros.cl",
+        "name": "Colegio Akros",
+        "operator": "4",
+        "school:type": "10;110;310",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5891055,
+          -33.4551968
+        ]
+      },
+      "id": "node/906435002"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906435013",
+        "addr:city": "Ñuñoa",
+        "addr:country": "CL",
+        "addr:housenumber": "75",
+        "addr:street": "Coventry",
+        "amenity": "school",
+        "contact:email": "rectoria@Colegiolafontaine.tie",
+        "name": "Colegio la Fontaine",
+        "note": "Correcciones masivas a ortografía en nombres de importaciones hechas por equipo de gendarmería",
+        "operator": "4",
+        "school:type": "10;110;310",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5799858,
+          -33.453392
+        ]
+      },
+      "id": "node/906435013"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906435015",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "3782",
+        "addr:street": "Manuel Covarrubias",
+        "amenity": "school",
+        "contact:email": "colmiguelarcangelpc@gmail.com",
+        "name": "Escuela Especial N°649 Miguel Arcangel",
+        "operator": "4",
+        "school:type": "212",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5903912,
+          -33.4498071
+        ]
+      },
+      "id": "node/906435015"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906435018",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "4106",
+        "addr:street": "Avenida Simón Bolívar",
+        "amenity": "kindergarten",
+        "contact:email": "jardin@mirincon.cl",
+        "name": "Mi Rincón",
+        "operator": "4",
+        "school:type": "10",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5874234,
+          -33.4483372
+        ]
+      },
+      "id": "node/906435018"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906435027",
+        "addr:housenumber": "781",
+        "addr:street": "Regina Pacis",
+        "amenity": "school",
+        "name": "Colegio The Angel's School",
+        "name:es": "colegio The Angels School",
+        "operator": "4",
+        "school:type": "10;110;310",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.594791,
+          -33.4471472
+        ]
+      },
+      "id": "node/906435027"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906435030",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "244",
+        "addr:street": "Coventry",
+        "amenity": "school",
+        "contact:email": "josemarianarbona@yahoo.es",
+        "name": "Liceo Tecnico N°58 José María Narbona",
+        "operator": "5",
+        "school:type": "610",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5805905,
+          -33.4517003
+        ]
+      },
+      "id": "node/906435030"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906435036",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "4340",
+        "addr:street": "Avenida Echeñique",
+        "amenity": "school",
+        "contact:email": "colegio_dulce@mixmail.com",
+        "name": "Escuela Especial Dulce Compañía",
+        "operator": "3",
+        "school:type": "212",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.584943,
+          -33.4465295
+        ]
+      },
+      "id": "node/906435036"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906435037",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "5110",
+        "addr:street": "Salitre",
+        "amenity": "kindergarten",
+        "contact:email": "kikarioseco@yahoo.com",
+        "name": "Escuela De Párvulos N°1211 Jardín Infantil Musical Don Osito",
+        "operator": "4",
+        "school:type": "10",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5778618,
+          -33.4452935
+        ]
+      },
+      "id": "node/906435037"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/906435327",
+        "addr:housenumber": "702",
+        "addr:street": "Avenida Ossa",
+        "amenity": "school",
+        "contact:email": "escuelaperello@gmail.com",
+        "name": "Escuela Especial J. Perello",
+        "operator": "3",
+        "school:type": "214",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.572095,
+          -33.4467461
+        ]
+      },
+      "id": "node/906435327"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/916518403",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "4899",
+        "addr:street": "Amapolas",
+        "amenity": "school",
+        "building": "school",
+        "name": "Colegio Amapolas",
+        "operator": "Corporación Municipal de Desarrollo Social de Ñuñoa",
+        "operator:type": "public",
+        "website": "https://colegioamapolas.cl/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5796333,
+          -33.4404031
+        ]
+      },
+      "id": "way/916518403"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1117410891",
+        "addr:city": "Ñuñoa",
+        "addr:country": "CL",
+        "addr:housenumber": "487",
+        "addr:street": "Manuel de Salas",
+        "amenity": "school",
+        "grades": "1-12",
+        "name": "Colegio Henry Fayol",
+        "website": "https://www.colegiofayol.cl/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5926221,
+          -33.4506185
+        ]
+      },
+      "id": "way/1117410891"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1117712753",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "516",
+        "addr:street": "Manuel de Salas",
+        "amenity": "kindergarten",
+        "name": "Magic Flowers",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5933461,
+          -33.450388
+        ]
+      },
+      "id": "way/1117712753"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1180678709",
+        "amenity": "school",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6198253,
+          -33.4565724
+        ]
+      },
+      "id": "way/1180678709"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1190495784",
+        "addr:city": "Ñuñoa",
+        "addr:country": "CL",
+        "addr:housenumber": "1084",
+        "addr:street": "Vía Trece",
+        "amenity": "school",
+        "name": "Fundación San Nectario",
+        "note": "Correcciones masivas a ortografía en nombres de importaciones hechas por equipo de gendarmería",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6195132,
+          -33.4698783
+        ]
+      },
+      "id": "way/1190495784"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1190495795",
+        "amenity": "school",
+        "name": "Centro Politécnico Particular de Ñuñoa",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.584721,
+          -33.4717432
+        ]
+      },
+      "id": "way/1190495795"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1190495796",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1077",
+        "addr:street": "Ramón Cruz Montt",
+        "amenity": "school",
+        "contact:email": "bcv97enl@ctcinternet.cl",
+        "education": "school",
+        "name": "Colegio Benjamín Claro Velasco",
+        "operator:type": "public",
+        "school:type": "10;110",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5823664,
+          -33.4654266
+        ]
+      },
+      "id": "way/1190495796"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1208322043",
+        "addr:city": "Ñuñoa",
+        "addr:street": "Avenida Pedro de Valdivia",
+        "amenity": "school",
+        "name": "Colegio Carmen Arriarán Obra Don Orione",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6053735,
+          -33.463993
+        ]
+      },
+      "id": "way/1208322043"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1208407072",
+        "amenity": "kindergarten",
+        "name": "Jardín y Sala Cuna Naranjitas",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6178685,
+          -33.4693355
+        ]
+      },
+      "id": "way/1208407072"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1208407074",
+        "amenity": "kindergarten",
+        "name": "Jardín Infantil Tierra de Niños",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6154415,
+          -33.4698663
+        ]
+      },
+      "id": "way/1208407074"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1208407077",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1240",
+        "addr:street": "Los Jazmines",
+        "amenity": "school",
+        "contact:email": "guillermozanartu@yahoo.es",
+        "contact:phone": "+56 2 2386082",
+        "contact:website": "http://www.colegioguillermozanartu.cl/cgzi/",
+        "name": "Colegio Guillermo Zañartu Irigoyen",
+        "operator": "1",
+        "school:type": "10;110",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "source_1": "Colegio Guillermo Zañartu Irigoyen http://www.colegioguillermozanartu.cl/cgzi/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6181122,
+          -33.4633474
+        ]
+      },
+      "id": "way/1208407077"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1245556514",
+        "addr:city": "ÑUÑOA",
+        "addr:housenumber": "2900",
+        "addr:street": "Dublé Almeyda",
+        "amenity": "kindergarten",
+        "name": "Despertares",
+        "phone": "+56227611418",
+        "source": "Reconocimiento cortográfico de campo 2016 por KG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6012157,
+          -33.4559352
+        ]
+      },
+      "id": "node/1245556514"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1268526295",
+        "amenity": "school",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6255115,
+          -33.4539047
+        ]
+      },
+      "id": "way/1268526295"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1307371297",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "4660",
+        "addr:street": "Alcalde Eduardo Castillo Velasco",
+        "amenity": "kindergarten",
+        "name": "Campanita",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5822409,
+          -33.4600915
+        ]
+      },
+      "id": "way/1307371297"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1308530966",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "4757",
+        "addr:postcode": "7760173",
+        "addr:street": "Dublé Almeyda",
+        "amenity": "school",
+        "contact:email": "colegioeduardofrei@cmdsnunoa.cl",
+        "contact:instagram": "@colegio_eduardo_frei_motalva",
+        "contact:phone": "232-51-1980",
+        "name": "Escuela Presidente Eduardo Frei Montalva",
+        "operator": "1",
+        "school:type": "10;110",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "website": "https://www.colegioeduardofrei.com/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5810814,
+          -33.4594504
+        ]
+      },
+      "id": "way/1308530966"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1311290670",
+        "amenity": "kindergarten",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6156559,
+          -33.4562848
+        ]
+      },
+      "id": "way/1311290670"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1349224904",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "715",
+        "addr:street": "Regina Pacis",
+        "amenity": "kindergarten",
+        "name": "Ansuz after school",
+        "website": "https://www.afterschoolansuz.cl/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5954267,
+          -33.4485607
+        ]
+      },
+      "id": "way/1349224904"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1350086683",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "3719",
+        "addr:street": "Avenida Presidente José Batlle y Ordóñez",
+        "amenity": "kindergarten",
+        "name": "La rana tana",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5908308,
+          -33.449094
+        ]
+      },
+      "id": "way/1350086683"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1351368646",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "3735",
+        "addr:street": "Julio Zegers",
+        "amenity": "kindergarten",
+        "contact:instagram": "https://www.instagram.com/club_ulani_after_school/",
+        "name": "Club Ulani",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5908538,
+          -33.4515787
+        ]
+      },
+      "id": "way/1351368646"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1352037829",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "477",
+        "addr:street": "Pedro Torres",
+        "amenity": "school",
+        "name": "Green Forest College",
+        "website": "https://www.greenforestcollege.com/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5887264,
+          -33.4508577
+        ]
+      },
+      "id": "way/1352037829"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1452896177",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "411",
+        "addr:street": "Clorinda Willshaw",
+        "amenity": "school",
+        "area": "yes",
+        "contact:email": "lenkafra@vtr.net",
+        "education": "school",
+        "grades": "9-12",
+        "name": "Liceo Lenka Franulic",
+        "operator": "1",
+        "operator:type": "public",
+        "phone": "+56923771135",
+        "religion": "none",
+        "school:type": "10;110;310",
+        "source": "Gobierno Regional Metropolitano de Santiago (http://www.gobiernosantiago.cl/)",
+        "website": "https://www.lenkafranulic.cl/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5722186,
+          -33.4496731
+        ]
+      },
+      "id": "way/1452896177"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1620291791",
+        "amenity": "kindergarten"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5796802,
+          -33.4549058
+        ]
+      },
+      "id": "node/1620291791"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549136008",
+        "addr:housenumber": "927",
+        "addr:street": "Lo Encalada",
+        "amenity": "kindergarten",
+        "name": "Anumrayen"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.623273,
+          -33.4605601
+        ]
+      },
+      "id": "node/3549136008"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549138155",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1355",
+        "addr:street": "Doctor Guillermo Mann",
+        "amenity": "kindergarten",
+        "name": "Jardín Infantil Areas Verdes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6174391,
+          -33.4710476
+        ]
+      },
+      "id": "node/3549138155"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549141093",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1770",
+        "addr:street": "Dublé Almeyda",
+        "amenity": "kindergarten",
+        "name": "Jardín Infantil Arroz con Leche",
+        "preschool": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.61242,
+          -33.4549759
+        ]
+      },
+      "id": "node/3549141093"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549207613",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "2651",
+        "addr:street": "Avenida José Domingo Cañas",
+        "amenity": "kindergarten",
+        "name": "Auca"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6041729,
+          -33.4574642
+        ]
+      },
+      "id": "node/3549207613"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549215360",
+        "addr:city": "Simon Bolivar",
+        "addr:housenumber": "2862",
+        "addr:street": "Avenida Simón Bolívar",
+        "amenity": "kindergarten",
+        "name": "Dragonfly"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6006689,
+          -33.449466
+        ]
+      },
+      "id": "node/3549215360"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549215855",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "510",
+        "addr:street": "Juan Enrique Concha",
+        "amenity": "kindergarten",
+        "name": "Centro Infantil UMCE"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5959654,
+          -33.4595086
+        ]
+      },
+      "id": "node/3549215855"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549216426",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "782",
+        "addr:street": "Pedro Hemrick Ling",
+        "amenity": "kindergarten",
+        "check_date": "2024-04-27",
+        "name": "Carrousel"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5929909,
+          -33.4626992
+        ]
+      },
+      "id": "node/3549216426"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549221394",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1268",
+        "addr:street": "Rengo",
+        "amenity": "kindergarten",
+        "name": "Dream Garden"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6188162,
+          -33.4483053
+        ]
+      },
+      "id": "node/3549221394"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549224671",
+        "addr:city": "ÑUÑOA",
+        "addr:housenumber": "2399",
+        "addr:street": "Luis Uribe",
+        "amenity": "kindergarten",
+        "name": "Entrepeques"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6060318,
+          -33.4514439
+        ]
+      },
+      "id": "node/3549224671"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549224683",
+        "addr:city": "ÑUÑOA",
+        "addr:housenumber": "1699",
+        "addr:street": "Calle 8",
+        "amenity": "kindergarten",
+        "name": "Girasol"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5839089,
+          -33.4708104
+        ]
+      },
+      "id": "node/3549224683"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549226169",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1316",
+        "addr:street": "Bremen",
+        "amenity": "kindergarten",
+        "name": "Hogar Mision De Maria"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5788798,
+          -33.4425303
+        ]
+      },
+      "id": "node/3549226169"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549229070",
+        "addr:city": "ÑUÑOA",
+        "addr:housenumber": "4850",
+        "addr:street": "Pasaje 9",
+        "amenity": "kindergarten",
+        "name": "Las Amapolas"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5807895,
+          -33.4410053
+        ]
+      },
+      "id": "node/3549229070"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549237038",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1650",
+        "addr:street": "Dublé Almeyda",
+        "amenity": "kindergarten",
+        "name": "Magic Flowers"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6139912,
+          -33.4545425
+        ]
+      },
+      "id": "node/3549237038"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549245289",
+        "addr:city": "ÑUÑOA",
+        "addr:housenumber": "3047",
+        "addr:street": "Alcalde Eduardo Castillo",
+        "amenity": "kindergarten",
+        "name": "Mi Infancia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5996722,
+          -33.4589496
+        ]
+      },
+      "id": "node/3549245289"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549252199",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "4777",
+        "addr:street": "Avenida Presidente José Batlle y Ordóñez",
+        "amenity": "kindergarten",
+        "name": "Novasol"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5820233,
+          -33.4535068
+        ]
+      },
+      "id": "node/3549252199"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549252200",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "3199",
+        "addr:street": "Avenida Ricardo Lyon",
+        "amenity": "kindergarten",
+        "name": "Parvulonautas",
+        "operator": "Parvulonautas Ltda."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6024999,
+          -33.4508059
+        ]
+      },
+      "id": "node/3549252200"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549253995",
+        "addr:city": "ÑUÑOA",
+        "addr:housenumber": "592",
+        "addr:street": "Montenegro",
+        "amenity": "kindergarten",
+        "name": "Parque De Los Peques",
+        "source": "Reconocimiento cartográfico 2016 por KG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5849283,
+          -33.4497448
+        ]
+      },
+      "id": "node/3549253995"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549256482",
+        "addr:city": "ÑUÑOA",
+        "addr:housenumber": "3900",
+        "addr:street": "Quillaga",
+        "amenity": "kindergarten",
+        "name": "Mundo Maravilloso"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.592559,
+          -33.4683054
+        ]
+      },
+      "id": "node/3549256482"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549263097",
+        "addr:city": "ÑUÑOA",
+        "addr:housenumber": "1160",
+        "addr:street": "Las Regatas",
+        "amenity": "kindergarten",
+        "name": "Pin-Pilin"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5781261,
+          -33.4659891
+        ]
+      },
+      "id": "node/3549263097"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549263130",
+        "addr:city": "ÑUÑOA",
+        "addr:housenumber": "194",
+        "addr:street": "Juan Moya",
+        "amenity": "kindergarten",
+        "name": "Railen"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5860037,
+          -33.4571531
+        ]
+      },
+      "id": "node/3549263130"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549266923",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "2790",
+        "addr:street": "Pedro De Valdivia",
+        "amenity": "kindergarten",
+        "name": "Querubin"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6054953,
+          -33.4479621
+        ]
+      },
+      "id": "node/3549266923"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549273211",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "778",
+        "addr:street": "Avenida José Pedro Allesandri",
+        "amenity": "kindergarten",
+        "name": "Relmutrayen"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5982775,
+          -33.4604323
+        ]
+      },
+      "id": "node/3549273211"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549276275",
+        "addr:city": "ÑUÑOA",
+        "addr:housenumber": "2937",
+        "addr:street": "Avenida José Domingo Cañas",
+        "amenity": "kindergarten",
+        "name": "Saint Flower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6008202,
+          -33.4575246
+        ]
+      },
+      "id": "node/3549276275"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549277099",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "168",
+        "addr:street": "Los Jardines",
+        "amenity": "kindergarten",
+        "name": "Repollitos"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5884821,
+          -33.4572368
+        ]
+      },
+      "id": "node/3549277099"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549279228",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1777",
+        "addr:street": "República de Israel",
+        "amenity": "kindergarten",
+        "name": "Semillita"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6158428,
+          -33.460238
+        ]
+      },
+      "id": "node/3549279228"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3549283881",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "3696",
+        "addr:street": "Avenida Holanda",
+        "amenity": "kindergarten",
+        "name": "Tia Pili"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5959547,
+          -33.4527667
+        ]
+      },
+      "id": "node/3549283881"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3553224025",
+        "addr:city": "PENALOLEN",
+        "addr:housenumber": "1566",
+        "addr:street": "Los Jardines",
+        "amenity": "kindergarten",
+        "name": "Copito de Nieve",
+        "source": "Reconocimiento cortográfico de campo 2016 por KG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5894477,
+          -33.4623056
+        ]
+      },
+      "id": "node/3553224025"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3564486093",
+        "amenity": "school"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6241779,
+          -33.4522173
+        ]
+      },
+      "id": "node/3564486093"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3669276965",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "213",
+        "addr:street": "Carmen Covarrubias",
+        "amenity": "kindergarten",
+        "name": "Jardín Infantil Corporación Grada"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6113407,
+          -33.4560529
+        ]
+      },
+      "id": "node/3669276965"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3669279087",
+        "addr:city": "Nunoa",
+        "addr:housenumber": "1852",
+        "addr:street": "Guillermo Mann",
+        "amenity": "kindergarten",
+        "name": "Jardín Infantil San Nectario",
+        "source": "Reconocimiento cortográfico de campo 2016 por KG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6140595,
+          -33.4686055
+        ]
+      },
+      "id": "node/3669279087"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4232050213",
+        "amenity": "kindergarten",
+        "check_date": "2025-08-15",
+        "name": "Jardín Infanti Arroz Con Leche"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6126675,
+          -33.4546521
+        ]
+      },
+      "id": "node/4232050213"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4232053796",
+        "addr:city": "Ñuñoa",
+        "addr:street": "Alonso de Ercilla",
+        "amenity": "kindergarten",
+        "name": "Jardín Infantil Macarena"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5988112,
+          -33.4516628
+        ]
+      },
+      "id": "node/4232053796"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4232057692",
+        "amenity": "kindergarten",
+        "name": "Jardín Infantil Rayun"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6111328,
+          -33.4540809
+        ]
+      },
+      "id": "node/4232057692"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4443183534",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1351",
+        "addr:street": "Diagonal Oriente",
+        "amenity": "school",
+        "name": "John John Junior High School"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6127766,
+          -33.4468659
+        ]
+      },
+      "id": "node/4443183534"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4477147628",
+        "addr:city": "Ñuñoa",
+        "amenity": "school",
+        "name": "Escuela de Filosofia",
+        "office": "educational_institution"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5899439,
+          -33.4556212
+        ]
+      },
+      "id": "node/4477147628"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4581935289",
+        "addr:street": "Villaseca",
+        "amenity": "kindergarten"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6035785,
+          -33.4499219
+        ]
+      },
+      "id": "node/4581935289"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4581942089",
+        "addr:housenumber": "340",
+        "addr:street": "Villaseca",
+        "amenity": "kindergarten",
+        "name": "Garden Kids",
+        "name:es": "Garden Kids"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6037584,
+          -33.4508789
+        ]
+      },
+      "id": "node/4581942089"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4704477791",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1720",
+        "addr:street": "Julio Prado",
+        "amenity": "kindergarten",
+        "name": "Fresita y sus amigos",
+        "name:es": "Fresita y sus amigos"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6203916,
+          -33.4489637
+        ]
+      },
+      "id": "node/4704477791"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5526061825",
+        "amenity": "school",
+        "name": "Artebianca"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5996132,
+          -33.4580452
+        ]
+      },
+      "id": "node/5526061825"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5764637755",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "2908",
+        "addr:street": "Avenida Simón Bolívar",
+        "amenity": "school",
+        "name": "Colegio Santa Gema Galgani"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5996768,
+          -33.44926
+        ]
+      },
+      "id": "node/5764637755"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5840132686",
+        "addr:housenumber": "1973",
+        "addr:street": "Román Díaz",
+        "amenity": "kindergarten",
+        "email": "info@kreative.cl",
+        "name": "Kreative. Centro de estimulación integral"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6170599,
+          -33.4489537
+        ]
+      },
+      "id": "node/5840132686"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8821270617",
+        "addr:city": "Ñuñoa",
+        "addr:street": "Cirujano Videla",
+        "amenity": "school",
+        "name": "Escuela arte danza"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6135505,
+          -33.4511214
+        ]
+      },
+      "id": "node/8821270617"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10963543598",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "662",
+        "addr:street": "Avenida Vicuña Mackenna",
+        "amenity": "school",
+        "name": "Escuela Particular Elvira Errazuriz"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6308563,
+          -33.4504622
+        ]
+      },
+      "id": "node/10963543598"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10963766012",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "755",
+        "addr:street": "Seminario",
+        "amenity": "school",
+        "name": "Escuela Basica N°280 Asociacion Montessori"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.627752,
+          -33.4511103
+        ]
+      },
+      "id": "node/10963766012"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10964090624",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "4899",
+        "addr:street": "Amapolas",
+        "amenity": "school",
+        "name": "Escuela Diferencial Municipal Amapolas"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5802918,
+          -33.4402484
+        ]
+      },
+      "id": "node/10964090624"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10965503561",
+        "addr:housenumber": "2736",
+        "addr:street": "Pista Recreativa Simón Bolívar",
+        "amenity": "school",
+        "name": "Escuela Particular Especial Ceintrale"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6020776,
+          -33.4497097
+        ]
+      },
+      "id": "node/10965503561"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10965543154",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1082",
+        "addr:street": "Alcalde Eduardo Castillo Velasco",
+        "amenity": "school",
+        "name": "Escuela Particular Manuel Antonio Matta"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6198323,
+          -33.4566729
+        ]
+      },
+      "id": "node/10965543154"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10965608403",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "260",
+        "addr:street": "Exequiel Fernández",
+        "amenity": "school",
+        "name": "Liceo Comercial Particular Ñuñoa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5995131,
+          -33.4570628
+        ]
+      },
+      "id": "node/10965608403"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10965608923",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "239",
+        "addr:street": "Inés Palma",
+        "amenity": "school",
+        "name": "Colegio Santa Margarita De Escocia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.626983,
+          -33.450853
+        ]
+      },
+      "id": "node/10965608923"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10965793813",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "263",
+        "addr:street": "Inés Palma",
+        "amenity": "school",
+        "name": "Taller Diferencial Dr. Alfonso Asenjo G."
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6267846,
+          -33.4508237
+        ]
+      },
+      "id": "node/10965793813"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10965822003",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1571",
+        "addr:street": "Pasaje 36",
+        "amenity": "school",
+        "name": "Colegio Particular Numero Dos De Nuñoa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5790789,
+          -33.4698807
+        ]
+      },
+      "id": "node/10965822003"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10971081357",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "4000",
+        "addr:street": "Avenida Pedro de Valdivia",
+        "amenity": "school",
+        "name": "Colegio Divina Pastora"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6053836,
+          -33.4592571
+        ]
+      },
+      "id": "node/10971081357"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10990021739",
+        "addr:city": "ÑUÑOA",
+        "addr:country": "CL",
+        "addr:housenumber": "2870",
+        "addr:street": "AlcalDe Eduardo Castillo Velasco",
+        "amenity": "school",
+        "name": "Jardín infantil Montessori Nido de Sientecolores",
+        "note": "Correcciones masivas a ortografía en nombres de importaciones hechas por equipo de gendarmería"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6018823,
+          -33.4584469
+        ]
+      },
+      "id": "node/10990021739"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11405647135",
+        "addr:city": "Ñuñoa",
+        "addr:country": "CL",
+        "addr:housenumber": "160",
+        "addr:street": "Ramón Cruz Montt",
+        "amenity": "school",
+        "name": "Jardín Infantil CarameLos de Luz",
+        "note": "Correcciones masivas a ortografía en nombres de importaciones hechas por equipo de gendarmería"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5798154,
+          -33.4559296
+        ]
+      },
+      "id": "node/11405647135"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11405795331",
+        "addr:city": "Ñuñoa",
+        "addr:country": "CL",
+        "addr:housenumber": "560",
+        "addr:street": "Crescente Errázuriz",
+        "amenity": "school",
+        "name": "Escuela Especial Mi Mundo de Ñuñoa",
+        "note": "Correcciones masivas a ortografía en nombres de importaciones hechas por equipo de gendarmería"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6241176,
+          -33.4568862
+        ]
+      },
+      "id": "node/11405795331"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11409920825",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "976",
+        "addr:street": "Exequiel Fernández",
+        "amenity": "school",
+        "name": "Escuela especial Nuestras Huellas"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5999175,
+          -33.4635574
+        ]
+      },
+      "id": "node/11409920825"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11415029381",
+        "addr:city": "ÑUÑOA",
+        "addr:housenumber": "295",
+        "addr:street": "Los Jardines",
+        "amenity": "school",
+        "name": "Colegio Jesualdo"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.589107,
+          -33.4584843
+        ]
+      },
+      "id": "node/11415029381"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11415069453",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "601",
+        "addr:street": "Coventry",
+        "amenity": "school",
+        "name": "Escuela Basica Fray Luis De Granada"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5803673,
+          -33.4488803
+        ]
+      },
+      "id": "node/11415069453"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11415154556",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "729",
+        "addr:street": "Heriberto Covarrubias",
+        "amenity": "school",
+        "name": "Escuela De Parvulos Aserrin"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5741995,
+          -33.4477769
+        ]
+      },
+      "id": "node/11415154556"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11429469265",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "1563",
+        "addr:street": "Avenida José Domingo Cañas",
+        "amenity": "kindergarten",
+        "name": "Jardín Infantil Topolino"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6156461,
+          -33.456259
+        ]
+      },
+      "id": "node/11429469265"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11429557611",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "2077",
+        "addr:street": "Crescente Errázuriz",
+        "amenity": "school",
+        "name": "Colegio El Roble"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6104177,
+          -33.458555
+        ]
+      },
+      "id": "node/11429557611"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11431978333",
+        "addr:city": "Ñuñoa",
+        "addr:housenumber": "2211",
+        "addr:street": "García Moreno",
+        "amenity": "kindergarten",
+        "name": "Jardin Infantil y Sala Cuna Amancay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.5832909,
+          -33.4367397
+        ]
+      },
+      "id": "node/11431978333"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12007633059",
+        "amenity": "school",
+        "name": "Escuela de Lenguaje Stella Maris"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -70.6119719,
+          -33.4606293
+        ]
+      },
+      "id": "node/12007633059"
+    }
+  ]
+}
