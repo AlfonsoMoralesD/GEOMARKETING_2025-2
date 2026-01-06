@@ -1,0 +1,1018 @@
+---
+title: "Localización óptima del servicio de Educación privada a partir de demanda microsimulada"
+author: "Alfonso Morales Donoso"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    number_sections: false
+    df_print: paged
+    theme: readable
+lang: es
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.align = "center",
+  fig.width = 9,
+  fig.height = 6
+)
+```
+
+# 1. Introducción
+
+En este trabajo el objetivo es **encontrar la mejor ubicación** para instalar un **establecimiento educacional privado**, considerando:
+
+- **Demanda potencial**: se modela el gasto en “aranceles” (EPF) y se imputa en CASEN para estimar demanda esperada.
+- **Oferta actual**: colegios existentes y su **área de influencia** (en mi caso trabajé con isocronas y pesos).
+- **Diagnóstico territorial**: detectar zonas con brecha (demanda alta y cobertura baja).
+- **Optimización**: elegir la ubicación del nuevo privado para mejorar la cobertura donde más falta hace.
+
+Además, se incluyen resultados obtenidos en **Google Colab (OSMnx)** para Ñuñoa, donde se filtraron colegios desde OSM por nombre y se evaluó la mejora de cobertura con una propuesta nueva.
+
+# 2. Preparación de datos
+
+##  2.1. Librerías
+
+```{r libs}
+library(haven)
+library(pROC)
+library(mgcv)
+library(ggplot2)
+library(dplyr)
+library(hexbin)
+library(scales)
+library(tidyr)
+```
+##  2.2. Carga y tratamiento de los datos
+En esta sección se cargan las bases EPF y se realiza la limpieza inicial (eliminando valores inválidos y casos con ingreso no válido). Luego se construye el ingreso per cápita y se recodifica sexo y escolaridad. Para el gasto en educación, se filtran los códigos CCIF de aranceles, se suma el gasto por hogar y se une a la base de personas, creando además una variable binaria de si el hogar incurre o no en arancel. Finalmente, se generan variables en log, se agrupa la edad y se recortan outliers (p1–p99) para dejar la base lista para el análisis y los modelos.
+```{r trat}
+# --- CARGA DE DATOS EPF ---
+personas    <- read_dta("Data/datos_epf/EPF/base-personas-ix-epf-stata.dta") 
+gastos      <- read_dta("Data/datos_epf/EPF/base-gastos-ix-epf-stata.dta") 
+cantidades  <- read_dta("Data/datos_epf/EPF/base-cantidades-ix-epf-stata.dta") 
+ccif        <- read_dta("Data/datos_epf/EPF/ccif-ix-epf-stata.dta") 
+
+
+# ============================================================
+#   TAREA 2 - EPF: LIMPIEZA Y VARIABLES
+# ============================================================
+
+# --- FILTRADO: EPF nacional y datos válidos ---
+valores_invalidos <- c(-99, -88, -77)
+
+personas_gs <- subset(
+  personas,
+  !(edad %in% valores_invalidos) &
+    !(edue %in% valores_invalidos) &
+    ing_disp_hog_hd_ai >= 0
+)
+
+# --- VARIABLES DERIVADAS ---
+personas_gs$ing_pc <- personas_gs$ing_disp_hog_hd_ai / personas_gs$npersonas
+personas_gs$id_persona <- paste0(personas_gs$folio, "-", personas_gs$n_linea, ".")
+personas_gs$sexo <- ifelse(personas_gs$sexo == 1, "Hombre",
+                           ifelse(personas_gs$sexo == 2, "Mujer", NA))
+personas_gs$sexo <- factor(personas_gs$sexo, levels = c("Hombre", "Mujer"))
+
+# ============================================================
+#   SECCIÓN EPF: ARANCELES DE EDUCACIÓN (MENSUALIZADOS)
+#   CCIF: varios códigos de arancel
+# ============================================================
+
+codigos_arancel_colegio <- c(
+  "10.1.1.01.02",  
+  "10.1.1.02.02",  
+  "10.2.1.01.02",  
+  "10.2.1.02.02"   
+)
+
+# --- FILTRO GASTO EN ARANCELES DE EDUCACIÓN ---
+gastos_arancel <- subset(
+  gastos,
+  ccif %in% codigos_arancel_colegio
+)
+
+# --- NÚMERO DE REGISTROS EN ESTA CATEGORÍA---
+n_registros_arancel <- nrow(gastos_arancel)
+cat("Número de registros en ARANCELES DE EDUCACIÓN (EPF, todos):",
+    n_registros_arancel, "\n")
+
+# --- SUMA GASTO TOTAL EN ARANCELES POR HOGAR (FOLIO) ---
+gasto_arancel_por_hogar <- aggregate(
+  gasto ~ folio,
+  data = gastos_arancel,
+  sum
+)
+names(gasto_arancel_por_hogar)[2] <- "gasto_arancel"
+
+# --- MERGE: Gasto con personas (cada persona hereda el gasto de su hogar) ---
+personas_gs <- merge(
+  personas_gs,
+  gasto_arancel_por_hogar,
+  by = "folio",
+  all.x = TRUE
+)
+
+# Reemplazar NA por 0 (hogares sin gasto en aranceles)
+personas_gs$gasto_arancel[is.na(personas_gs$gasto_arancel)] <- 0
+
+# --- VARIABLE BINARIA DE GASTO EN ARANCELES ---
+personas_gs$incurre_arancel <- ifelse(personas_gs$gasto_arancel > 0, 1, 0)
+
+# --- AGRUPACIÓN ESCOLARIDAD ---
+personas_gs$grupo_escolaridad <- cut(
+  personas_gs$edue,
+  breaks = c(-Inf, 12, 14, 16, Inf),
+  labels = c("Escolar", "Tecnico", "Universitaria", "Postgrado"),
+  right  = TRUE
+)
+
+# --- BASE PARA MODELO CONTINUO (solo quienes gastan en aranceles) ---
+tabla_gasto <- subset(personas_gs, gasto_arancel > 0)
+tabla_gasto <- tabla_gasto[, c("sexo", "edad", "edue", "ing_pc",
+                               "gasto_arancel", "grupo_escolaridad",
+                               "npersonas", "ecivil", "sprincipal", "mh09")]
+
+# Limpieza de códigos inválidos en estas variables
+tabla_gasto$ecivil[tabla_gasto$ecivil %in% valores_invalidos]        <- NA
+tabla_gasto$sprincipal[tabla_gasto$sprincipal %in% valores_invalidos] <- NA
+tabla_gasto$mh09[tabla_gasto$mh09 %in% valores_invalidos]            <- NA
+
+# Factores
+tabla_gasto$ecivil     <- factor(tabla_gasto$ecivil)
+tabla_gasto$sprincipal <- factor(tabla_gasto$sprincipal)
+tabla_gasto$mh09       <- factor(tabla_gasto$mh09)
+
+# --- TRANSFORMACIONES DE VARIABLES ---
+tabla_gasto$log_ing_pc        <- log(tabla_gasto$ing_pc + 1)
+tabla_gasto$log_gasto_arancel <- log(tabla_gasto$gasto_arancel + 1)
+
+tabla_gasto$rango_edad <- cut(
+  tabla_gasto$edad,
+  breaks = c(0, 29, 44, 64, Inf),
+  labels = c("jovenes", "adultos_jovenes", "adultos", "adultos_mayores")
+)
+
+# --- FILTRO DE OUTLIERS (percentil 1 y 99) ---
+q_ing   <- quantile(tabla_gasto$ing_pc,         probs = c(0.01, 0.99), na.rm = TRUE)
+q_gasto <- quantile(tabla_gasto$gasto_arancel,  probs = c(0.01, 0.99), na.rm = TRUE)
+
+tabla_gasto <- subset(
+  tabla_gasto,
+  ing_pc         >= q_ing[1]   & ing_pc         <= q_ing[2] &
+    gasto_arancel >= q_gasto[1] & gasto_arancel <= q_gasto[2]
+)
+```
+
+##  2.3. Analisis exploratorio (Gráficos)
+```{r analisis_exploratorio}
+# ============================================================
+#   GRÁFICOS EXPLORATORIOS
+# ============================================================
+
+# DISTRIBUCIÓN DEL INGRESO
+hist(tabla_gasto$ing_pc, breaks = 30, col = "lightblue",
+     main = "Distribución del Ingreso per cápita (EPF)",
+     xlab = "Ingreso per cápita")
+```
+
+```{r d gastos en aranceles}
+# DISTRIBUCIÓN DEL GASTO EN ARANCELES
+hist(tabla_gasto$gasto_arancel, breaks = 30, col = "lightblue",
+     main = "Distribución del Gasto en Aranceles de Educación",
+     xlab = "Gasto en aranceles")
+```
+
+```{r d gastos segun sexo}
+# GASTO EN ARANCELES SEGÚN SEXO
+boxplot(gasto_arancel ~ sexo, data = tabla_gasto,
+        main = "Gasto en Aranceles según Sexo",
+        xlab = "Sexo",
+        col  = c("tomato", "lightgreen"))
+```
+
+```{r grafico edad vs gastos}
+# Edad vs Gasto en aranceles (hexágonos, amarillo → rojo)
+ggplot(tabla_gasto, aes(x = edad, y = gasto_arancel)) +
+  stat_binhex(bins = 50) +
+  geom_smooth(method = "lm", color = "blue", se = TRUE) +
+  scale_fill_gradient(
+    name  = "Frecuencia",
+    low   = "yellow",
+    high  = "red"
+  ) +
+  scale_y_continuous(labels = label_number(suffix = "MM", scale = 1e-6)) +
+  labs(
+    title = "Edad vs Gasto en Aranceles de Educación",
+    x     = "Edad",
+    y     = "Gasto en aranceles"
+  ) +
+  theme_minimal()
+```
+
+```{r ingreso per capita vs gasto }
+# Ingreso per cápita vs Gasto en aranceles (hexágonos, amarillo → rojo)
+ggplot(tabla_gasto, aes(x = ing_pc, y = gasto_arancel)) +
+  stat_binhex(bins = 50) +
+  geom_smooth(method = "lm", color = "blue", se = TRUE) +
+  scale_fill_gradient(
+    name  = "Frecuencia",
+    low   = "yellow",
+    high  = "red"
+  ) +
+  scale_x_continuous(labels = label_number(suffix = "MM", scale = 1e-6, big.mark = ".")) +
+  scale_y_continuous(labels = label_number(suffix = "MM", scale = 1e-6, big.mark = ".")) +
+  labs(
+    title = "Ingreso vs Gasto en Aranceles de Educación",
+    x     = "Ingreso per cápita",
+    y     = "Gasto en aranceles"
+  ) +
+  theme_minimal()
+```
+
+```{r Gastos segun escolaridad}
+# BOXPLOT GASTO SEGÚN ESCOLARIDAD
+boxplot(gasto_arancel ~ grupo_escolaridad, data = tabla_gasto,
+        main = "Gasto en Aranceles según Escolaridad",
+        xlab = "Escolaridad",
+        col  = "skyblue")
+```
+
+# 2.4. Modelo en dos partes
+##  2.4.1. Modelo Logit
+El modelo Logit se usa para estimar la probabilidad de que un hogar **(o persona)** incurra en gasto de arancel. Para esto se define una variable binaria **incurre_arancel**, donde 1 indica que el gasto es mayor a cero y 0 que no hay gasto. Luego, con variables explicativas como ingreso per cápita, edad, sexo y escolaridad, el modelo entrega una probabilidad entre 0 y 1 para cada observación. Esta probabilidad se interpreta como la “tendencia” a pagar arancel y se utiliza como primera etapa para construir la demanda esperada, combinándola después con el modelo del monto del gasto.
+```{r Modelo Logit, echo=TRUE, message=FALSE, warning=FALSE}
+## -------------------------
+## 1) MODELO LOGIT (incurre/no incurre en gasto)
+## -------------------------
+
+modelo_data <- subset(
+  personas_gs,
+  !is.na(edad) & !is.na(sexo) & !is.na(grupo_escolaridad) & !is.na(ing_pc)
+)
+
+modelo_data$log_ing_pc <- log(modelo_data$ing_pc + 1)
+
+modelo_logit <- glm(
+  incurre_arancel ~ sexo + edad + grupo_escolaridad + log_ing_pc,
+  data   = modelo_data,
+  family = binomial
+)
+summary(modelo_logit)
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+## -------------------------
+# Probabilidades predichas
+modelo_data$prob_predicha <- predict(modelo_logit, type = "response")
+
+# Umbral estándar 0.5
+modelo_data$clasificacion_05 <- ifelse(modelo_data$prob_predicha >= 0.5, 1, 0)
+
+cat("---- Evaluación con umbral 0.5 ----\n")
+conf_05 <- table(
+  Real     = modelo_data$incurre_arancel,
+  Predicha = modelo_data$clasificacion_05
+)
+print(conf_05)
+
+accuracy_05 <- mean(modelo_data$incurre_arancel == modelo_data$clasificacion_05)
+cat("Accuracy (0.5):", accuracy_05, "\n")
+
+# Curva ROC y AUC
+roc_obj <- roc(modelo_data$incurre_arancel, modelo_data$prob_predicha)
+
+plot(
+  roc_obj,
+  col = "blue",
+  main = "Curva ROC - Logit Aranceles Educación",
+  legacy.axes = TRUE,             # hace que el eje X vaya de 0 a 1
+  xlab = "1 - Especificidad (FPR)",
+  ylab = "Sensibilidad (TPR)"
+)
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+auc_val <- auc(roc_obj)
+cat("AUC:", auc_val, "\n")
+# Umbral óptimo (Youden)
+coords_opt <- coords(roc_obj, "best",
+                     ret = c("threshold", "sensitivity", "specificity"))
+umbral_optimo <- as.numeric(coords_opt["threshold"])
+cat("Umbral óptimo:", umbral_optimo, "\n")
+cat("Sensibilidad óptima:",  coords_opt["sensitivity"][[1]],  "\n")
+cat("Especificidad óptima:", coords_opt["specificity"][[1]], "\n")
+
+# Evaluación con umbral óptimo
+modelo_data$clasificacion_optima <- ifelse(
+  modelo_data$prob_predicha >= umbral_optimo, 1, 0
+)
+
+cat("\n---- Evaluación con umbral óptimo ----\n")
+conf_opt <- table(
+  Real     = modelo_data$incurre_arancel,
+  Predicha = modelo_data$clasificacion_optima
+)
+print(conf_opt)
+
+accuracy_opt <- mean(modelo_data$incurre_arancel == modelo_data$clasificacion_optima)
+cat("Accuracy (óptimo):", accuracy_opt, "\n")
+
+```
+
+
+##  2.4.2. Modelo Lineal
+El modelo lineal se aplica para estimar el monto del gasto en arancel, pero solo en los casos donde efectivamente hay gasto **(gasto_arancel > 0)**. Para mejorar el ajuste y reducir la influencia de valores extremos, el gasto se modela en su forma transformada log(1 + gasto). Como variables explicativas se usan factores similares al Logit, como ingreso *per cápita*, *edad*, *sexo* y *escolaridad*. El resultado del modelo se interpreta como el *gasto esperado condicional*, es decir, cuánto se espera que gaste un hogar dado que ya gasta. Este valor luego se combina con la probabilidad del Logit para obtener la **demanda esperada total**.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+## -------------------------
+## 2) MODELO LINEAL (monto dado que gasta)
+## -------------------------
+
+modelo_lineal <- lm(
+  log_gasto_arancel ~ sexo + edad + grupo_escolaridad + log_ing_pc,
+  data = tabla_gasto
+)
+
+summary(modelo_lineal)
+```
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Métricas de desempeño del modelo lineal
+resid_log <- residuals(modelo_lineal)
+rmse_log  <- sqrt(mean(resid_log^2))
+cat("RMSE (escala log):", rmse_log, "\n")
+
+# Pasando a escala original de gasto (pesos)
+pred_log   <- predict(modelo_lineal)                 # mismo data que modelo
+obs_log    <- modelo_lineal$model$log_gasto_arancel  # vector usado en la estimación
+obs_monto  <- exp(obs_log) - 1
+pred_monto <- exp(pred_log) - 1
+
+rmse_nivel <- sqrt(mean((obs_monto - pred_monto)^2))
+cat("RMSE (escala original, pesos):", rmse_nivel, "\n")
+```
+
+##  2.5. Limpieza de la CASEN
+En esta sección se carga la base CASEN preprocesada y se preparan las variables para que queden compatibles con las usadas en EPF. Primero se construye el ingreso per cápita (ing_pc) a partir de ypc y se recodifica sexo con las mismas categorías (*Hombre* y *Mujer*). Luego, la escolaridad *(esc)* se agrupa en los mismos cuatro tramos definidos en EPF **(Escolar, Técnico, Universitaria y Postgrado)** y se crea también el rango de edad con los mismos cortes. Además, se calcula log_ing_pc para usarlo en los modelos. Finalmente, se eliminan registros con valores faltantes en las variables clave, dejando una base limpia y lista para aplicar las predicciones del *Logit* y del modelo *lineal*.
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# ============================================================
+#   CASEN: LIMPIEZA Y VARIABLES EXPLICATIVAS
+# ============================================================
+
+# Ajusta la ruta según tu carpeta (Data/ vs data/)
+casen <- readRDS("Data/casen_base_preprocesado.rds")
+
+# Ingreso per cápita
+casen$ing_pc <- casen$ypc
+
+# Sexo igual que en EPF
+casen$sexo <- ifelse(casen$sexo == 1, "Hombre",
+                     ifelse(casen$sexo == 2, "Mujer", NA))
+casen$sexo <- factor(casen$sexo, levels = c("Hombre", "Mujer"))
+
+# Escolaridad en grupos (mismos cortes que EPF)
+casen$grupo_escolaridad <- cut(
+  casen$esc,
+  breaks = c(-Inf, 12, 14, 16, Inf),
+  labels = c("Escolar", "Tecnico", "Universitaria", "Postgrado"),
+  right  = TRUE
+)
+
+# Rango de edad (mismos cortes)
+casen$rango_edad <- cut(
+  casen$edad,
+  breaks = c(0, 29, 44, 64, Inf),
+  labels = c("jovenes", "adultos_jovenes", "adultos", "adultos_mayores")
+)
+
+casen$log_ing_pc <- log(casen$ing_pc + 1)
+
+# Quitamos casos con NA en variables clave
+casen <- subset(
+  casen,
+  !is.na(ing_pc) &
+    !is.na(edad) &
+    !is.na(sexo) &
+    !is.na(grupo_escolaridad)
+)
+
+```
+
+
+##  2.6. Imputación del gasto en aranceles
+En esta sección se realiza la imputación del gasto en aranceles sobre la base CASEN usando los dos modelos estimados con EPF. Primero, con el Logit se calcula para cada registro la probabilidad de incurrir en gasto (prob_predicha). Luego, usando el umbral óptimo, se clasifica quiénes “gastarían” (1) y quiénes no (0). Para el grupo clasificado como gasto (casos con clasificacion == 1), se aplica el modelo lineal para predecir el monto del gasto, revirtiendo la transformación logarítmica para obtener valores en pesos.
+
+Como control de valores extremos, el gasto imputado se winsoriza al 99.9%, evitando que pocos casos con montos muy altos distorsionen los resultados. Finalmente, se revisan estadísticas descriptivas y se grafica la distribución del gasto imputado, comparándola con EPF mediante histogramas y curvas de densidad, para verificar si la imputación reproduce de forma razonable el patrón observado en la encuesta original.
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# ============================================================
+#   IMPUTACIÓN DEL GASTO EN ARANCELES EN CASEN
+# ============================================================
+
+# 1) Probabilidad de incurrir en gasto según modelo logit
+casen$prob_predicha <- predict(
+  modelo_logit,
+  newdata = casen,
+  type    = "response"
+)
+
+# Clasificación según umbral óptimo
+casen$clasificacion <- ifelse(casen$prob_predicha >= umbral_optimo, 1, 0)
+table(casen$clasificacion)
+
+# 2) Para quienes se proyecta que sí gastan, predecimos el monto
+casen_pred <- subset(casen, clasificacion == 1)
+
+casen_pred$log_gasto_estimado <- predict(
+  modelo_lineal,
+  newdata = casen_pred
+)
+
+casen_pred$gasto_estimado <- exp(casen_pred$log_gasto_estimado) - 1
+
+# Winzorización al 99.9% para controlar outliers
+p99_9 <- quantile(casen_pred$gasto_estimado, 0.999, na.rm = TRUE)
+casen_pred$gasto_estimado_wins <- pmin(casen_pred$gasto_estimado, p99_9)
+
+# Estadísticas básicas de los gastos imputados
+summary(casen_pred$gasto_estimado_wins)
+sd(casen_pred$gasto_estimado_wins, na.rm = TRUE)
+```
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+hist(casen_pred$gasto_estimado_wins, breaks = 50,
+     main = "Distribución gasto imputado en aranceles de educación (CASEN)",
+     xlab = "Gasto imputado (winsorizado)")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Comparación EPF vs CASEN imputado
+summary(tabla_gasto$gasto_arancel)
+sd(tabla_gasto$gasto_arancel)
+```
+
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+plot(
+  density(tabla_gasto$gasto_arancel),
+  col  = "blue", lwd = 2,
+  main = "Densidad: EPF vs CASEN imputado (Aranceles educación)",
+  xlab = "Gasto en aranceles de educación"
+)
+lines(
+  density(casen_pred$gasto_estimado_wins),
+  col  = "red", lwd = 2
+)
+legend("topright",
+       legend = c("EPF", "CASEN imputado"),
+       col    = c("blue", "red"),
+       lwd    = 2
+)
+```
+# 3. Tratamiento en Google Colab
+
+Se dejaron listas las herramientas necesarias (se instalaron e importaron librerías). Después, el código descargó desde GitHub todos los archivos que se van a usar (mapa de Ñuñoa en shapefile, colegios en GeoJSON y una tabla Excel) y los guardó en la carpeta /content/Data. Al final, revisó que las descargas salieran bien (que el link funcionara y que los archivos no quedaran vacíos) y mostró la lista de archivos disponibles.
+```{r, eval=FALSE}
+# =========================================================
+# CELDA 0) Instalación + imports + descarga desde GitHub + carga + diagnóstico
+# Repo: https://github.com/AlfonsoMoralesD/GEOMARKETING_2025-2/tree/main/Data
+# =========================================================
+
+!pip -q install geopandas osmnx rapidfuzz openpyxl xlrd
+
+import os
+from pathlib import Path
+from urllib.parse import quote
+
+import requests
+import geopandas as gpd
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+import osmnx as ox
+import networkx as nx
+from shapely.geometry import Point
+from rapidfuzz import fuzz, process
+
+pd.set_option("display.max_columns", 200)
+
+# -----------------------------
+# 1) Descargar archivos desde GitHub (raw)
+# -----------------------------
+OUT_DIR = Path("/content/Data")
+OUT_DIR.mkdir(parents=True, exist_ok=True)
+
+FILES = [
+    "Colegios.geojson",
+    "Tabla_colegios.xls",
+    "shp_ñuñoa.cpg",
+    "shp_ñuñoa.dbf",
+    "shp_ñuñoa.prj",
+    "shp_ñuñoa.sbn",
+    "shp_ñuñoa.sbx",
+    "shp_ñuñoa.shp",
+    "shp_ñuñoa.shx",
+]
+
+def download_all(branch="main"):
+    base_raw = f"https://raw.githubusercontent.com/AlfonsoMoralesD/GEOMARKETING_2025-2/{branch}/Data/"
+    for fname in FILES:
+        url = base_raw + quote(fname)  # importante para la ñ
+        out_path = OUT_DIR / fname
+
+        r = requests.get(url, timeout=60)
+        if r.status_code != 200:
+            raise RuntimeError(f" No se pudo descargar {fname} (HTTP {r.status_code}). URL: {url}")
+
+        out_path.write_bytes(r.content)
+
+        # Chequeo básico de tamaño
+        if out_path.stat().st_size < 50:
+            print(f"️  {fname} quedó muy chico ({out_path.stat().st_size} bytes). Revisa el URL.")
+        else:
+            print(f"{fname} OK ({out_path.stat().st_size/1024:.1f} KB)")
+
+# Intentar main, si falla probar master
+try:
+    print(" Descargando desde branch: main")
+    download_all("main")
+except Exception as e:
+    print("⚠ Falló con 'main'. Probando con 'master'...")
+    # limpiar lo descargado parcial para evitar mezclas
+    for p in OUT_DIR.glob("*"):
+        try: p.unlink()
+        except: pass
+    print(" Descargando desde branch: master")
+    download_all("master")
+
+print("\n Archivos en /content/Data:")
+for p in sorted(OUT_DIR.iterdir()):
+    print(" -", p.name)
+```
+
+En esta celda se cargaron los datos principales desde /content/Data: el shapefile de las zonas de Ñuñoa, la capa de colegios obtenida desde OSM (GeoJSON) y la tabla Excel con la lista de nombres. Luego se hizo un diagnóstico básico, mostrando cuántos registros tiene cada archivo, el sistema de coordenadas (CRS) de las capas y algunas columnas de la tabla. Finalmente, se generó un mapa rápido para verificar visualmente que las zonas y los puntos de colegios estén bien cargados y ubicados.
+```{r, eval=FALSE}
+# =========================================================
+# CELDA 1) Cargar datos (ajusta nombres si cambian)
+#  - shp_ñuñoa.shp + archivos auxiliares (dbf, shx, prj...)
+#  - Colegios.geojson (OSM)
+#  - Tabla_colegios.xls (lista de nombres a filtrar)
+# =========================================================
+zonas = gpd.read_file(OUT_DIR / "shp_ñuñoa.shp")
+colegios_osm = gpd.read_file(OUT_DIR / "Colegios.geojson")
+
+# .xls suele requerir xlrd (instalado en Celda 0)
+tabla = pd.read_excel(OUT_DIR / "Tabla_colegios.xls", engine="xlrd")
+
+print("Zonas:", len(zonas), "| OSM:", len(colegios_osm), "| Tabla:", len(tabla))
+print("CRS zonas:", zonas.crs)
+print("CRS OSM:", colegios_osm.crs)
+print("Columnas tabla:", list(tabla.columns)[:20])
+
+# --- Visualización rápida (en CRS original, solo diagnóstico) ---
+fig, ax = plt.subplots(1, 1, figsize=(7,7))
+zonas.boundary.plot(ax=ax, linewidth=0.7)
+colegios_osm.plot(ax=ax, markersize=8, alpha=0.7)
+ax.set_title("Diagnóstico inicial: Zonas + Colegios OSM (CRS original)")
+ax.set_axis_off()
+plt.show()
+
+```
+
+![](images/1.png)
+
+En esta celda se estandarizó el sistema de coordenadas para trabajar correctamente con distancias en metros: tanto las zonas como los colegios se reproyectaron a UTM 19S (EPSG:32719). Además, a las zonas se les creó un identificador único (zona_id) para poder referenciarlas más adelante. Si la capa de colegios no venía con CRS, se asumió WGS84 (EPSG:4326) antes de reproyectar. Al final, se imprimieron los CRS y se hizo un mapa de chequeo para confirmar que ambas capas quedaran alineadas en UTM.
+```{r, eval=FALSE}
+# =========================================================
+# CELDA 2) CRS a UTM 19S + IDs
+# =========================================================
+EPSG_UTM = 32719
+
+zonas = zonas.to_crs(EPSG_UTM).reset_index(drop=True).copy()
+zonas["zona_id"] = zonas.index
+
+if colegios_osm.crs is None:
+    # si no tiene CRS, normalmente geojson viene en 4326
+    colegios_osm = colegios_osm.set_crs(4326)
+
+colegios_osm = colegios_osm.to_crs(EPSG_UTM)
+
+print("CRS zonas:", zonas.crs, "| CRS OSM:", colegios_osm.crs)
+
+# --- Visualización (ya en metros) ---
+fig, ax = plt.subplots(1, 1, figsize=(7,7))
+zonas.boundary.plot(ax=ax, linewidth=0.7)
+colegios_osm.plot(ax=ax, markersize=8, alpha=0.6)
+ax.set_title("Chequeo CRS: Zonas (UTM) + Colegios OSM (UTM)")
+ax.set_axis_off()
+plt.show()
+
+```
+
+
+En esta celda se seleccionaron los colegios de OSM que coinciden con la lista de la tabla Excel, usando una comparación de nombres “aproximada” para tolerar diferencias de escritura. Para esto, se normalizaron los nombres, se usaron varias columnas posibles de nombre en OSM y se aceptaron solo coincidencias con puntaje ≥ 75. El resultado se guardó en colegios_f, asignando minutos = 15 y peso = 1.0, y se generó un mapa para verificar que los puntos filtrados quedaran correctos sobre Ñuñoa.
+
+```{r, eval=FALSE}
+# =========================================================
+# CELDA 3) Filtrado por nombres  usando variantes OSM
+#   -> colegios_f (filtrados únicos)
+# =========================================================
+def norm_name(s):
+    if pd.isna(s):
+        return ""
+    s = str(s).strip().lower()
+    # quitar tildes básicas
+    rep = str.maketrans({"á":"a","é":"e","í":"i","ó":"o","ú":"u","ñ":"n"})
+    s = s.translate(rep)
+    # limpiar
+    s = "".join(c for c in s if c.isalnum() or c.isspace())
+    s = " ".join(s.split())
+    return s
+
+# columna de nombre en tabla
+name_tab = "Nombre_EE" if "Nombre_EE" in tabla.columns else tabla.columns[0]
+tabla["name_norm"] = tabla[name_tab].map(norm_name)
+tabla_names = tabla["name_norm"].dropna().tolist()
+tabla_names = [t for t in tabla_names if t != ""]
+
+# columnas nombre OSM
+use_cols = [c for c in ["name", "alt_name", "old_name", "short_name", "name:es", "name:de"] if c in colegios_osm.columns]
+if len(use_cols) == 0:
+    # fallback: cualquier columna que contenga "name"
+    use_cols = [c for c in colegios_osm.columns if "name" in c.lower()]
+if len(use_cols) == 0:
+    raise ValueError("No encontré columnas de nombre en Colegios.geojson")
+
+# construir variantes por fila (deduplicadas)
+rows = []
+for idx, row in colegios_osm.iterrows():
+    variants = []
+    for c in use_cols:
+        val = row.get(c, None)
+        if pd.isna(val) or val is None:
+            continue
+        variants.append(norm_name(val))
+    variants = list({v for v in variants if v})
+    if len(variants) == 0:
+        continue
+    for v in variants:
+        rows.append((idx, v))
+
+variants_df = pd.DataFrame(rows, columns=["osm_idx", "name_norm"])
+
+# fuzzy match: para cada variante, buscar mejor match en tabla
+def best_match_score(v):
+    if not v:
+        return 0
+    m = process.extractOne(v, tabla_names, scorer=fuzz.token_set_ratio)
+    return m[1] if m else 0
+
+variants_df["score"] = variants_df["name_norm"].map(best_match_score)
+
+thr = 75
+good = variants_df[variants_df["score"] >= thr].copy()
+matched_osm_idx = good["osm_idx"].unique()
+
+colegios_f = colegios_osm.loc[matched_osm_idx].copy()
+
+print("Total tabla:", len(tabla_names))
+print("Colegios OSM total:", len(colegios_osm))
+print("Colegios filtrados (únicos):", len(colegios_f))
+
+# parámetros (puedes ajustar)
+colegios_f["minutos"] = 15
+colegios_f["peso"] = 1.0
+
+# --- Visualización: zonas + colegios filtrados ---
+fig, ax = plt.subplots(1, 1, figsize=(7,7))
+zonas.boundary.plot(ax=ax, linewidth=0.7)
+colegios_f.plot(ax=ax, markersize=20, alpha=0.85)
+ax.set_title("Colegios filtrados (match>=75) sobre Ñuñoa")
+ax.set_axis_off()
+plt.show()
+
+```
+
+
+En esta celda se descargó y preparó la red caminable de Ñuñoa desde OpenStreetMap. Para eso, se construyó el polígono de la comuna, se pasó a WGS84 y se aplicó un pequeño buffer para evitar cortes en el borde. Luego, con OSMnx se generó el grafo de calles para caminar, se asignó una velocidad de 5 km/h y se calculó el tiempo de viaje por tramo. Finalmente, se revisó el tamaño de la red (nodos/aristas) y se mostró un mapa para comprobar que la red quedara bien.
+
+```{r, eval=FALSE}
+# =========================================================
+# CELDA 4) Descargar red caminable + travel_time
+# =========================================================
+# Polígono comuna en WGS84 para OSMnx
+comuna_poly = zonas.unary_union
+comuna_wgs = gpd.GeoSeries([comuna_poly], crs=EPSG_UTM).to_crs(4326).iloc[0]
+
+# (pequeño buffer en grados para evitar cortes en borde)
+comuna_wgs_buf = comuna_wgs.buffer(0.002)
+
+G = ox.graph_from_polygon(comuna_wgs_buf, network_type="walk", simplify=True)
+
+# tiempos caminata
+ox.settings.default_speed_walk = 5
+for u, v, k, data in G.edges(keys=True, data=True):
+    data["speed_kph"] = 5
+G = ox.add_edge_travel_times(G)
+
+print("G listo | nodos:", len(G.nodes), "| aristas:", len(G.edges))
+
+# --- Visualización de red + borde Ñuñoa ---
+fig, ax = plt.subplots(1, 1, figsize=(7,7))
+zonas.boundary.to_crs(4326).plot(ax=ax, linewidth=1.0)
+ox.plot_graph(G, ax=ax, node_size=0, edge_linewidth=0.5, show=False, close=False)
+ax.set_title("Red caminable OSMnx + borde Ñuñoa (WGS84)")
+ax.set_axis_off()
+plt.show()
+
+```
+![](images/4.png)
+
+En esta celda se generaron las isócronas de cada colegio filtrado, es decir, el área que se puede alcanzar caminando en un tiempo definido. Para cada colegio se buscó el nodo más cercano en la red, se calculó el alcance en segundos y se construyó un polígono de cobertura (con un buffer de respaldo si faltaban nodos). Luego, todas las isócronas se guardaron en iso_gdf junto con el id_est y su peso, y se mostró un mapa con algunas isócronas para verificar que el resultado estuviera correcto.
+
+```{r, eval=FALSE}
+# =========================================================
+# CELDA 5) Función isócrona + crear iso_gdf (oferta actual)
+# =========================================================
+def make_isochrone(G, point_utm, minutes):
+    # punto a WGS84 para nearest node
+    p_wgs = gpd.GeoSeries([point_utm], crs=EPSG_UTM).to_crs(4326).iloc[0]
+    center = ox.nearest_nodes(G, X=p_wgs.x, Y=p_wgs.y)
+
+    cutoff = minutes * 60
+    sub = nx.ego_graph(G, center, radius=cutoff, distance="travel_time")
+
+    node_pts = [Point((data["x"], data["y"])) for n, data in sub.nodes(data=True)]
+    if len(node_pts) < 3:
+        # fallback pequeño
+        return point_utm.buffer(120)
+
+    poly = gpd.GeoSeries(node_pts, crs=4326).unary_union.convex_hull
+    return gpd.GeoSeries([poly], crs=4326).to_crs(EPSG_UTM).iloc[0]
+
+iso_rows = []
+for idx, row in colegios_f.iterrows():
+    iso = make_isochrone(G, row.geometry, int(row["minutos"]))
+    iso_rows.append({"id_est": idx, "peso": float(row["peso"]), "geometry": iso})
+
+iso_gdf = gpd.GeoDataFrame(iso_rows, crs=EPSG_UTM)
+print("iso_gdf creado:", len(iso_gdf))
+
+# --- Visualización: muestra 3 isócronas ---
+m = min(3, len(iso_gdf))
+sample_iso = iso_gdf.sample(m, random_state=1) if m > 0 else iso_gdf
+
+fig, ax = plt.subplots(1, 1, figsize=(7,7))
+zonas.boundary.plot(ax=ax, linewidth=0.7)
+sample_iso.plot(ax=ax, alpha=0.25, edgecolor="black", linewidth=0.8)
+colegios_f.plot(ax=ax, markersize=10, alpha=0.8)
+ax.set_title(f"Muestra de isócronas (n={m}) + colegios filtrados")
+ax.set_axis_off()
+plt.show()
+
+```
+
+En este bloque se midió la cobertura por zona a partir de las isócronas de los colegios. Para eso, se cruzaron espacialmente las zonas con las isócronas (intersección), y luego se resumió por zona_id cuántos colegios cubren cada zona (oferta_n) y la cobertura ponderada total (SUM_Peso). Finalmente, estos resultados se agregaron a la capa de zonas (rellenando vacíos con 0) y se mostraron estadísticas y un mapa de SUM_Peso para visualizar la cobertura.
+```{r, eval=FALSE}
+# =========================================================
+# CELDA 6) Cobertura por zona: SUM_Peso + oferta_n
+# =========================================================
+join = gpd.sjoin(
+    zonas[["zona_id", "geometry"]],
+    iso_gdf[["id_est", "peso", "geometry"]],
+    predicate="intersects",
+    how="left"
+)
+
+agg = (join.groupby("zona_id")
+          .agg(
+              oferta_n=("id_est", lambda x: int(x.notna().sum())),
+              SUM_Peso=("peso", "sum")
+          )
+          .reset_index()
+      )
+
+zonas = zonas.merge(agg, on="zona_id", how="left")
+zonas["oferta_n"] = zonas["oferta_n"].fillna(0).astype(int)
+zonas["SUM_Peso"] = zonas["SUM_Peso"].fillna(0.0).astype(float)
+
+print("Cobertura lista ✅")
+print(zonas[["oferta_n","SUM_Peso"]].describe())
+
+# --- Visualización SUM_Peso ---
+fig, ax = plt.subplots(1, 1, figsize=(7,7))
+zonas.plot(column="SUM_Peso", legend=True, ax=ax, linewidth=0.2, edgecolor="white")
+ax.set_title("Cobertura ponderada SUM_Peso (oferta actual)")
+ax.set_axis_off()
+plt.show()
+
+```
+![](images/6.png)
+En esta celda se verifica si existe la variable demanda_total en zonas. Si no está, el código la crea automáticamente usando alguna columna disponible como proxy (por ejemplo población, hogares o densidad); si no encuentra ninguna, asigna una demanda uniforme (1 en todas las zonas). Luego muestra un resumen y un mapa para revisar la distribución de la demanda.
+```{r, eval=FALSE}
+# =========================================================
+# CELDA 7) Demanda: crear demanda_total automáticamente (si no existe)
+#  (esto evita tu error: No encuentro 'demanda_total')
+# =========================================================
+if "demanda_total" not in zonas.columns:
+    print("⚠️ No existe demanda_total. Crearé un proxy automáticamente.")
+
+    cand_pop  = [c for c in zonas.columns if any(k in c.lower() for k in ["pob","pop","pobl","habit","person","hab"])]
+    cand_hog  = [c for c in zonas.columns if any(k in c.lower() for k in ["hog","house","viv","vivi","home"])]
+    cand_ing  = [c for c in zonas.columns if any(k in c.lower() for k in ["ing","income","renta","mediana","median"])]
+    cand_den  = [c for c in zonas.columns if "dens" in c.lower()]
+    cand_area = [c for c in zonas.columns if any(k in c.lower() for k in ["area","shape_area"])]
+
+    chosen, source = None, None
+    if len(cand_pop)>0:  chosen, source = cand_pop[0], "población/habitantes"
+    elif len(cand_hog)>0: chosen, source = cand_hog[0], "hogares/viviendas"
+    elif len(cand_ing)>0: chosen, source = cand_ing[0], "ingreso/mediana"
+    elif len(cand_den)>0: chosen, source = cand_den[0], "densidad"
+    elif len(cand_area)>0: chosen, source = cand_area[0], "área"
+    else:
+        chosen, source = None, "uniforme"
+
+    if chosen is not None:
+        zonas["demanda_total"] = pd.to_numeric(zonas[chosen], errors="coerce")
+        zonas["demanda_total"] = zonas["demanda_total"].fillna(zonas["demanda_total"].median())
+        zonas["demanda_total"] = zonas["demanda_total"].clip(lower=0)
+        if float(zonas["demanda_total"].sum()) == 0:
+            zonas["demanda_total"] = 1.0
+            source = "uniforme (fallback)"
+    else:
+        zonas["demanda_total"] = 1.0
+
+    print("✅ demanda_total creada | Fuente:", source, "| Columna:", chosen)
+    print(zonas["demanda_total"].describe())
+else:
+    print("✅ demanda_total ya existe en zonas")
+    print(zonas["demanda_total"].describe())
+
+# --- Visualización demanda ---
+fig, ax = plt.subplots(1, 1, figsize=(7,7))
+zonas.plot(column="demanda_total", legend=True, ax=ax, linewidth=0.2, edgecolor="white")
+ax.set_title("Demanda (demanda_total) por zona")
+ax.set_axis_off()
+plt.show()
+
+```
+![](images/7.png)
+En esta celda se calculó un indicador de brecha entre demanda y cobertura. Para cada zona se creó ratio_dem_cov, que es demanda_total / SUM_Peso (y se usa un valor mínimo muy pequeño para evitar división por cero). Luego se mostraron estadísticas descriptivas y un mapa para identificar visualmente las zonas con mayor déficit relativo (ratio más alto).
+```{r, eval=FALSE}
+# =========================================================
+# CELDA 8) Diagnóstico: ratio demanda/cobertura
+# =========================================================
+zonas["ratio_dem_cov"] = zonas["demanda_total"] / np.maximum(zonas["SUM_Peso"], 1e-6)
+
+print(zonas["ratio_dem_cov"].describe())
+
+fig, ax = plt.subplots(1, 1, figsize=(7,7))
+zonas.plot(column="ratio_dem_cov", legend=True, ax=ax, linewidth=0.2, edgecolor="white")
+ax.set_title("Brecha: razón demanda / cobertura (ratio_dem_cov)")
+ax.set_axis_off()
+plt.show()
+
+```
+![](images/8.png)
+En esta celda se realizó una optimización para proponer la mejor ubicación de un nuevo colegio privado. Primero se definieron los parámetros del escenario (tau como cobertura mínima deseada, w_new como el aporte del nuevo colegio y t_new como su tiempo de caminata). Luego, para cada zona se calculó el déficit (cuánto falta para llegar a tau) y un beneficio potencial (beneficio_i) que combina la demanda con ese déficit. Con ese beneficio se seleccionaron las 150 zonas más prometedoras como candidatas y, para cada una, se generó una isócrona de t_new minutos y se sumó el beneficio de las zonas que quedaban cubiertas. Finalmente, se eligió la candidata con mayor “beneficio capturado”, se recalculó la cobertura resultante (SUM_Peso_post) para ver qué zonas pasan a cumplir el umbral, y se reportaron los cambios y las coordenadas (lon/lat) del nuevo punto propuesto.
+```{r, eval=FALSE}
+# =========================================================
+# CELDA 9) Optimización p=1: nuevo PRIVADO (isócrona candidata)
+#  - define tau, w_new, t_new
+#  - elige top N candidatos por beneficio
+#  - evalúa mejor candidato por beneficio capturado
+# =========================================================
+tau   = 3.0
+w_new = 1.5
+t_new = 18  # minutos nuevo privado (escenario base)
+
+zonas["deficit"]     = np.maximum(0, tau - zonas["SUM_Peso"])
+zonas["beneficio_i"] = zonas["demanda_total"] * np.minimum(zonas["deficit"], w_new)
+
+N_cand = min(150, len(zonas))
+cand = zonas.sort_values("beneficio_i", ascending=False).head(N_cand).copy()
+cand["geometry"] = cand.geometry.representative_point()
+cand = cand.set_geometry("geometry")
+
+best_score, best_iso, best_idx = -1, None, None
+
+for k, (i, r) in enumerate(cand.iterrows(), start=1):
+    iso = make_isochrone(G, r.geometry, t_new)
+    covered = zonas.geometry.intersects(iso)
+    score = float(zonas.loc[covered, "beneficio_i"].sum())
+    if score > best_score:
+        best_score, best_iso, best_idx = score, iso, i
+    if k % 25 == 0:
+        print(f"Evaluadas {k}/{len(cand)} candidatas... mejor score actual = {best_score:.3f}")
+
+new_site = cand.loc[[best_idx]].copy()
+new_buf  = gpd.GeoDataFrame([{"geometry": best_iso}], crs=EPSG_UTM)
+
+covered_new = zonas.geometry.intersects(best_iso)
+zonas["SUM_Peso_post"] = zonas["SUM_Peso"] + (w_new * covered_new.astype(int))
+zonas["cubierto_actual"] = zonas["SUM_Peso"] >= tau
+zonas["cubierto_final"]  = zonas["SUM_Peso_post"] >= tau
+zonas["nueva_cobertura"] = (~zonas["cubierto_actual"]) & (zonas["cubierto_final"])
+zonas["delta_peso"]      = zonas["SUM_Peso_post"] - zonas["SUM_Peso"]
+
+print("Mejor candidato (índice):", best_idx, "| beneficio capturado:", best_score)
+print("Zonas total:", len(zonas))
+print("Zonas True (mejoran):", int(zonas["nueva_cobertura"].sum()))
+print("Cobertura antes:", zonas["cubierto_actual"].mean(), "| después:", zonas["cubierto_final"].mean())
+
+# coordenadas del punto en lat/lon
+new_site_ll = new_site.to_crs(4326).copy()
+print("Nuevo privado (lon, lat):", float(new_site_ll.geometry.x), float(new_site_ll.geometry.y))
+
+```
+
+En esta celda se generó la visualización final de los resultados. Primero se mapeó nueva_cobertura como True/False para mostrar qué zonas mejoran con el nuevo colegio. Luego se agregaron al mapa la isócrona del nuevo privado (new_buf), los colegios actuales filtrados (colegios_f) y el punto del nuevo establecimiento (new_site). Finalmente, se imprimieron métricas de resumen para cuantificar el efecto: cuántas zonas aumentan su cobertura (delta_peso > 0) y el cambio promedio y máximo de delta_peso.
+```{r, eval=FALSE}
+# =========================================================
+# CELDA 10) Visualización final: True/False + nuevo + área + colegios
+# =========================================================
+fig, ax = plt.subplots(1, 1, figsize=(7,7))
+
+zonas.assign(flag=zonas["nueva_cobertura"]).plot(
+    column="flag", categorical=True, legend=True,
+    ax=ax, linewidth=0.2, edgecolor="white"
+)
+
+new_buf.plot(ax=ax, alpha=0.25, edgecolor="black", linewidth=0.8)
+colegios_f.plot(ax=ax, markersize=10, alpha=0.85)
+new_site.plot(ax=ax, markersize=80)
+
+ax.set_title("Zonas que mejoran (True/False) + oferta actual + nuevo privado")
+ax.set_axis_off()
+plt.show()
+
+print("Zonas con delta_peso > 0:", int((zonas["delta_peso"] > 0).sum()))
+print("Promedio delta_peso:", zonas["delta_peso"].mean())
+print("Máximo delta_peso:", zonas["delta_peso"].max())
+
+```
+![](images/10.png)
+En esta celda se visualizó la mejora continua generada por el nuevo colegio usando delta_peso, que representa cuánto aumenta la cobertura en cada zona después de la propuesta. Luego se agregó al mapa el área de influencia del nuevo establecimiento (new_buf) y su ubicación (new_site) para ver dónde se concentra el impacto.
+```{r, eval=FALSE}
+# =========================================================
+# CELDA 11) Visualización: mejora continua (delta_peso)
+# =========================================================
+fig, ax = plt.subplots(1, 1, figsize=(7,7))
+zonas.plot(column="delta_peso", legend=True, ax=ax, linewidth=0.2, edgecolor="white")
+new_buf.plot(ax=ax, alpha=0.15, edgecolor="black", linewidth=0.8)
+new_site.plot(ax=ax, markersize=80)
+ax.set_title("Mejora continua: delta_peso")
+ax.set_axis_off()
+plt.show()
+
+```
+![](images/11.png)
+```{r, eval=FALSE}
+print("nueva_cobertura value_counts:")
+print(zonas["nueva_cobertura"].value_counts(dropna=False))
+
+print("\nCubierto actual (SUM_Peso >= tau):")
+print((zonas["SUM_Peso"] >= tau).value_counts())
+
+print("\nCubierto final (SUM_Peso_post >= tau):")
+print((zonas["SUM_Peso_post"] >= tau).value_counts())
+
+print("\nZonas con deficit>0 (SUM_Peso < tau):", int((zonas["SUM_Peso"] < tau).sum()))
+print("Zonas tocadas por el nuevo (delta_peso>0):", int((zonas["delta_peso"] > 0).sum()))
+
+```
+```{r, eval=FALSE}
+nueva_cobertura value_counts:
+nueva_cobertura
+False    1333
+True       14
+Name: count, dtype: int64
+
+Cubierto actual (SUM_Peso >= tau):
+SUM_Peso
+True     1323
+False      24
+Name: count, dtype: int64
+
+Cubierto final (SUM_Peso_post >= tau):
+SUM_Peso_post
+True     1337
+False      10
+Name: count, dtype: int64
+
+Zonas con deficit>0 (SUM_Peso < tau): 24
+Zonas tocadas por el nuevo (delta_peso>0): 166
+```
+
+# 4. Conclusiones
+El trabajo integró demanda microsimulada y oferta actual para proponer la mejor ubicación de un nuevo establecimiento educacional privado. La demanda se estimó a partir de EPF mediante un modelo en dos partes (Logit para la probabilidad de pagar arancel y modelo lineal para el monto), y luego se imputó en CASEN para obtener una medida de demanda potencial.
+
+En Ñuñoa, la oferta se representó con colegios de OSM filtrados por nombre y isócronas caminables calculadas sobre red OSMnx. Con esto se midió la cobertura por zona (SUM_Peso y oferta_n) y se identificaron brechas con ratio_dem_cov, destacando sectores donde la demanda relativa es alta y la cobertura es baja.
+
+La optimización (p=1) eligió la ubicación que maximiza el beneficio en zonas deficitarias. Los resultados muestran una cobertura base alta, pero con déficit localizado: 24 zonas no cumplían el umbral antes y 10 zonas después. En total, 14 zonas mejoran (pasan a cumplir tau) y el nuevo establecimiento aumenta cobertura en 166 zonas (delta_peso > 0). En general, el método entrega una propuesta reproducible basada en accesibilidad real, aunque depende de supuestos (tau, t_new, w_new) y de la calidad de la oferta OSM y del proxy usado para demanda_total.
+
+
